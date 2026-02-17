@@ -1,46 +1,47 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import ProjectHeader from '@/components/projects/ProjectHeader';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import TaskBoard from '@/components/tasks/TaskBoard';
-import MemberList from '@/components/projects/MemberList';
-import TaskForm from '@/components/tasks/TaskForm';
-import ProjectForm from '@/components/projects/ProjectForm';
-import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import { useProject } from '@/lib/hooks/useProjects';
-import { useTasks } from '@/lib/hooks/useTasks';
-import { DetailSkeleton } from '@/components/shared/LoadingSkeleton';
-import ErrorBanner from '@/components/shared/ErrorBanner';
-import { FolderKanban, Users } from 'lucide-react';
+import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import ProjectHeader from "@/components/projects/ProjectHeader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TaskBoard from "@/components/tasks/TaskBoard";
+import MemberList from "@/components/projects/MemberList";
+import TaskForm from "@/components/tasks/TaskForm";
+import ProjectForm from "@/components/projects/ProjectForm";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import { useProject } from "@/lib/hooks/useProjects";
+import { useTasks } from "@/lib/hooks/useTasks";
+import { DetailSkeleton } from "@/components/shared/LoadingSkeleton";
+import ErrorBanner from "@/components/shared/ErrorBanner";
+import { FolderKanban, Users } from "lucide-react";
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { 
-    project, 
-    members, 
-    tasks, 
-    isLoading, 
-    isError, 
-    addMember, 
+  const {
+    project,
+    members,
+    tasks,
+    isLoading,
+    isError,
+    error,
+    addMember,
     removeMember,
     updateProject,
-    deleteProject
+    deleteProject,
   } = useProject(id);
-  
+
   const { createTask, deleteTask } = useTasks();
 
-  const [activeTab, setActiveTab] = useState('board');
+  const [activeTab, setActiveTab] = useState("board");
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isTaskDeleteOpen, setIsTaskDeleteOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [initialTaskStatus, setInitialTaskStatus] = useState('TODO');
+  const [initialTaskStatus, setInitialTaskStatus] = useState("TODO");
 
-  const handleAddTask = (status = 'TODO') => {
+  const handleAddTask = (status = "TODO") => {
     setInitialTaskStatus(status);
     setSelectedTask(null);
     setIsTaskFormOpen(true);
@@ -74,44 +75,58 @@ export default function ProjectDetailPage() {
 
   const onConfirmProjectDelete = async () => {
     await deleteProject.mutateAsync(id);
-    router.push('/projects');
+    router.push("/projects");
   };
 
   if (isLoading) return <DetailSkeleton />;
-  if (isError) return <ErrorBanner message="Failed to load project details." />;
+  if (isError)
+    return (
+      <ErrorBanner
+        message={error.message ?? "Failed to load project details."}
+      />
+    );
   if (!project) return <ErrorBanner message="Project not found." />;
 
   return (
     <div className="space-y-6">
-      <ProjectHeader 
-        project={project} 
+      <ProjectHeader
+        project={project}
         onEdit={() => setIsProjectFormOpen(true)}
-        onAddTask={() => handleAddTask('TODO')}
+        onAddTask={() => handleAddTask("TODO")}
       />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="bg-white border w-full md:w-auto p-1 h-12 shadow-sm rounded-xl mb-6">
-          <TabsTrigger value="board" className="rounded-lg data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex items-center px-6">
+          <TabsTrigger
+            value="board"
+            className="rounded-lg data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex items-center px-6"
+          >
             <FolderKanban className="h-4 w-4 mr-2" />
             Task Board
           </TabsTrigger>
-          <TabsTrigger value="members" className="rounded-lg data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex items-center px-6">
+          <TabsTrigger
+            value="members"
+            className="rounded-lg data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 flex items-center px-6"
+          >
             <Users className="h-4 w-4 mr-2" />
             Members
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="board" className="mt-0 focus-visible:outline-none">
-          <TaskBoard 
-            tasks={tasks} 
+          <TaskBoard
+            tasks={tasks}
             onEditTask={handleEditTask}
             onDeleteTask={handleDeleteTaskClick}
             onAddTask={handleAddTask}
           />
         </TabsContent>
-        
-        <TabsContent value="members" className="mt-0 focus-visible:outline-none">
-          <MemberList 
+
+        <TabsContent
+          value="members"
+          className="mt-0 focus-visible:outline-none"
+        >
+          <MemberList
             project={project}
             members={members}
             onAddMember={(userId) => addMember.mutate({ userId })}
@@ -136,7 +151,7 @@ export default function ProjectDetailPage() {
         onOpenChange={setIsProjectFormOpen}
         project={project}
         onSubmit={(data) => updateProject.mutate({ id, data })}
-        loading={updateProject.isPending}
+        // loading={updateProject.isPending}
       />
 
       <ConfirmDialog
@@ -145,7 +160,7 @@ export default function ProjectDetailPage() {
         title="Delete Project"
         description="Are you sure you want to delete this project? This action cannot be undone."
         onConfirm={onConfirmProjectDelete}
-        loading={deleteProject.isPending}
+        // loading={deleteProject.isPending}
       />
 
       <ConfirmDialog
@@ -154,7 +169,7 @@ export default function ProjectDetailPage() {
         title="Delete Task"
         description="Are you sure you want to delete this task?"
         onConfirm={onConfirmTaskDelete}
-        loading={deleteTask.isPending}
+        // loading={deleteTask.isPending}
       />
     </div>
   );

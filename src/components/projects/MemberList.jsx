@@ -1,46 +1,52 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { UserPlus, UserMinus, Search, ShieldCheck } from 'lucide-react';
-import { getInitials } from '@/lib/utils';
-import UserRoleBadge from '@/components/users/UserRoleBadge';
-import { useActiveUser } from '@/providers/ActiveUserContext';
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from '@/components/ui/popover';
-import { 
-  Command, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandInput, 
-  CommandItem, 
-  CommandList 
-} from '@/components/ui/command';
+import React, { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { UserPlus, UserMinus, Search, ShieldCheck } from "lucide-react";
+import { getInitials } from "@/lib/utils";
+import UserRoleBadge from "@/components/users/UserRoleBadge";
+import { useActiveUser } from "@/providers/ActiveUserContext";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
-const MemberList = ({ project, members, onAddMember, onRemoveMember, loading }) => {
+const MemberList = ({
+  project,
+  members,
+  onAddMember,
+  onRemoveMember,
+  loading,
+}) => {
   const { activeUser, users } = useActiveUser();
   const [open, setOpen] = useState(false);
 
   // Check if active user can manage members
-  const isAdmin = activeUser?.role === 'ADMIN';
+  const isAdmin = activeUser?.role === "ADMIN";
   const isOwner = activeUser?.id === project?.owner?.id;
   const canManage = isAdmin || isOwner;
 
   // Filter out users who are already members
-  const memberIds = members.map(m => m.id);
-  const nonMembers = users.filter(u => !memberIds.includes(u.id));
+  const memberIds = members.content.map((m) => m.id);
+  const nonMembers = users.content.filter((u) => !memberIds.includes(u.id));
 
   return (
     <div className="space-y-6">
@@ -49,7 +55,7 @@ const MemberList = ({ project, members, onAddMember, onRemoveMember, loading }) 
           <ShieldCheck className="h-5 w-5 mr-2 text-blue-600" />
           Project Team
         </h3>
-        
+
         {canManage && (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -97,11 +103,13 @@ const MemberList = ({ project, members, onAddMember, onRemoveMember, loading }) 
               <TableHead>Member</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              {canManage && <TableHead className="text-right">Action</TableHead>}
+              {canManage && (
+                <TableHead className="text-right">Action</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members.map((member) => (
+            {members.content.map((member) => (
               <TableRow key={member.id} className="group transition-colors">
                 <TableCell>
                   <Avatar className="h-8 w-8">
@@ -112,9 +120,13 @@ const MemberList = ({ project, members, onAddMember, onRemoveMember, loading }) 
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <span className="font-medium text-gray-900">{member.name}</span>
+                    <span className="font-medium text-gray-900">
+                      {member.name}
+                    </span>
                     {project.owner?.id === member.id && (
-                      <span className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Owner</span>
+                      <span className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">
+                        Owner
+                      </span>
                     )}
                   </div>
                 </TableCell>
@@ -139,9 +151,12 @@ const MemberList = ({ project, members, onAddMember, onRemoveMember, loading }) 
                 )}
               </TableRow>
             ))}
-            {members.length === 0 && (
+            {members.totalElements === 0 && (
               <TableRow>
-                <TableCell colSpan={canManage ? 5 : 4} className="h-32 text-center text-gray-500 italic">
+                <TableCell
+                  colSpan={canManage ? 5 : 4}
+                  className="h-32 text-center text-gray-500 italic"
+                >
                   No members added to this project yet.
                 </TableCell>
               </TableRow>

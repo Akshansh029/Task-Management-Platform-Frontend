@@ -1,30 +1,30 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import * as usersApi from '@/lib/api/users';
-import { useToast } from '@/lib/hooks/use-toast';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import * as usersApi from "@/lib/api/users";
+import { useToast } from "@/lib/hooks/use-toast";
 
 export function useUsers() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const usersQuery = useQuery({
-    queryKey: ['users'],
+    queryKey: ["users"],
     queryFn: usersApi.getUsers,
   });
 
   const createUserMutation = useMutation({
     mutationFn: usersApi.createUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
-        title: 'Success',
-        description: 'User created successfully',
+        title: "Success",
+        description: "User created successfully",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Error',
-        description: error.userMessage || 'Failed to create user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to create user",
+        variant: "destructive",
       });
     },
   });
@@ -32,18 +32,18 @@ export function useUsers() {
   const updateUserMutation = useMutation({
     mutationFn: ({ id, data }) => usersApi.updateUser(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['users', data.id] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["users", data.id] });
       toast({
-        title: 'Success',
-        description: 'User updated successfully',
+        title: "Success",
+        description: "User updated successfully",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Error',
-        description: error.userMessage || 'Failed to update user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to update user",
+        variant: "destructive",
       });
     },
   });
@@ -51,18 +51,18 @@ export function useUsers() {
   const updateUserRoleMutation = useMutation({
     mutationFn: ({ id, data }) => usersApi.updateUserRole(id, data),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['users', data.id] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["users", data.id] });
       toast({
-        title: 'Success',
-        description: 'User updated successfully',
+        title: "Success",
+        description: "User updated successfully",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Error',
-        description: error.userMessage || 'Failed to update user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to update user",
+        variant: "destructive",
       });
     },
   });
@@ -70,23 +70,23 @@ export function useUsers() {
   const deleteUserMutation = useMutation({
     mutationFn: usersApi.deleteUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
-        title: 'Success',
-        description: 'User deleted successfully',
+        title: "Success",
+        description: "User deleted successfully",
       });
     },
     onError: (error) => {
       toast({
-        title: 'Error',
-        description: error.userMessage || 'Failed to delete user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to delete user",
+        variant: "destructive",
       });
     },
   });
 
   return {
-    users: usersQuery.data || [],
+    users: usersQuery.data || { content: [] },
     isLoading: usersQuery.isLoading,
     isError: usersQuery.isError,
     error: usersQuery.error,
@@ -98,7 +98,7 @@ export function useUsers() {
 
 export function useUser(id) {
   return useQuery({
-    queryKey: ['users', id],
+    queryKey: ["users", id],
     queryFn: () => usersApi.getUser(id),
     enabled: !!id,
   });

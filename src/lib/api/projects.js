@@ -1,8 +1,9 @@
-import apiClient from './client';
+import apiClient from "./client";
 
 // Get all projects
 export const getProjects = async () => {
-  const response = await apiClient.get('/projects');
+  const response = await apiClient.get("/projects");
+
   return response.data;
 };
 
@@ -10,18 +11,18 @@ export const getProjects = async () => {
 export const getProject = async (id) => {
   const response = await apiClient.get(`/projects/${id}`, {
     headers: {
-      'X-User-ID': '28'
-    }
+      "X-User-ID": "28",
+    },
   });
   return response.data;
 };
 
 // Create project
 export const createProject = async (projectData) => {
-  const response = await apiClient.post('/projects', projectData, {
+  const response = await apiClient.post("/projects", projectData, {
     headers: {
-      'X-User-ID': '28'
-    }
+      "X-User-ID": "28",
+    },
   });
   return response.data;
 };
@@ -30,8 +31,8 @@ export const createProject = async (projectData) => {
 export const updateProject = async (id, projectData) => {
   const response = await apiClient.put(`/projects/${id}`, projectData, {
     headers: {
-      'X-User-ID': '28'
-    }
+      "X-User-ID": "28",
+    },
   });
   return response.data;
 };
@@ -40,8 +41,8 @@ export const updateProject = async (id, projectData) => {
 export const deleteProject = async (id) => {
   await apiClient.delete(`/projects/${id}`, {
     headers: {
-      'X-User-ID': '28'
-    }
+      "X-User-ID": "28",
+    },
   });
 };
 
@@ -53,11 +54,15 @@ export const getProjectMembers = async (projectId) => {
 
 // Add member to project
 export const addProjectMember = async (projectId, userId) => {
-  const response = await apiClient.post(`/projects/${projectId}/members/${userId}`, {
-    headers: {
-      'X-User-ID': '28'
-    }
-  });
+  const response = await apiClient.post(
+    `/projects/${projectId}/members/${userId}`,
+    null,
+    {
+      headers: {
+        "X-User-ID": "28",
+      },
+    },
+  );
   return response.data;
 };
 
@@ -65,8 +70,8 @@ export const addProjectMember = async (projectId, userId) => {
 export const removeProjectMember = async (projectId, userId) => {
   await apiClient.delete(`/projects/${projectId}/members/${userId}`, {
     headers: {
-      'X-User-ID': '28'
-    }
+      "X-User-ID": "28",
+    },
   });
 };
 
@@ -74,8 +79,8 @@ export const removeProjectMember = async (projectId, userId) => {
 export const getProjectTasks = async (projectId) => {
   const response = await apiClient.get(`/projects/${projectId}/tasks`, {
     headers: {
-      'X-User-ID': '28'
-    }
+      "X-User-ID": "28",
+    },
   });
   return response.data;
 };

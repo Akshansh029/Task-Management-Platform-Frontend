@@ -11,8 +11,6 @@ export function useProjects() {
     queryFn: projectsApi.getProjects,
   });
 
-  console.log("Projects: ", projectsQuery);
-
   const createProjectMutation = useMutation({
     mutationFn: projectsApi.createProject,
     onSuccess: () => {
@@ -25,7 +23,7 @@ export function useProjects() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.userMessage || "Failed to create project",
+        description: error.message || "Failed to create project",
         variant: "destructive",
       });
     },
@@ -44,7 +42,7 @@ export function useProjects() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.userMessage || "Failed to update project",
+        description: error.message || "Failed to update project",
         variant: "destructive",
       });
     },
@@ -62,14 +60,14 @@ export function useProjects() {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.userMessage || "Failed to delete project",
+        description: error.message || "Failed to delete project",
         variant: "destructive",
       });
     },
   });
 
   return {
-    projects: projectsQuery.data || [],
+    projects: projectsQuery.data || { content: [] },
     isLoading: projectsQuery.isLoading,
     isError: projectsQuery.isError,
     error: projectsQuery.error,
@@ -114,7 +112,7 @@ export function useProject(id) {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.userMessage || "Failed to add member",
+        description: error.message || "Failed to add member",
         variant: "destructive",
       });
     },
@@ -133,7 +131,7 @@ export function useProject(id) {
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.userMessage || "Failed to remove member",
+        description: error.message || "Failed to remove member",
         variant: "destructive",
       });
     },
@@ -141,11 +139,12 @@ export function useProject(id) {
 
   return {
     project: projectQuery.data,
-    members: membersQuery.data || [],
-    tasks: tasksQuery.data || [],
+    members: membersQuery.data,
+    tasks: tasksQuery.data,
     isLoading:
       projectQuery.isLoading || membersQuery.isLoading || tasksQuery.isLoading,
     isError: projectQuery.isError,
+    error: projectQuery.error,
     addMember: addMemberMutation,
     removeMember: removeMemberMutation,
   };

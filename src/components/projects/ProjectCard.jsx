@@ -1,19 +1,31 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Users, CheckSquare, MoreVertical, Edit, Trash2 } from 'lucide-react';
-import { formatDate, getInitials } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import {
+  Calendar,
+  Users,
+  CheckSquare,
+  MoreVertical,
+  Edit,
+  Trash2,
+} from "lucide-react";
+import { formatDate, getInitials } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const ProjectCard = ({ project, onEdit, onDelete }) => {
   const router = useRouter();
@@ -23,9 +35,9 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
   };
 
   return (
-    <Card 
-      className="group hover:shadow-md transition-all cursor-pointer border-t-4 overflow-hidden" 
-      style={{ borderTopColor: '#3b82f6' }}
+    <Card
+      className="group hover:shadow-md transition-all cursor-pointer border-t-4 overflow-hidden"
+      style={{ borderTopColor: "#3b82f6" }}
       onClick={handleClick}
     >
       <CardHeader className="p-5 pb-2">
@@ -35,13 +47,17 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
               {project.title}
             </h3>
             <p className="text-sm text-gray-500 line-clamp-2 min-h-[40px]">
-              {project.description || 'No description provided.'}
+              {project.description || "No description provided."}
             </p>
           </div>
           <div onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-gray-400"
+                >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -50,7 +66,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Project
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => onDelete(project)}
                   className="text-red-600 focus:text-red-700 focus:bg-red-50"
                 >
@@ -66,17 +82,19 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
         <div className="flex items-center space-x-2 text-gray-600 mb-4">
           <Avatar className="h-6 w-6">
             <AvatarFallback className="text-[10px] bg-blue-50 text-blue-700">
-              {getInitials(project.owner?.name)}
+              {getInitials(project.ownerName)}
             </AvatarFallback>
           </Avatar>
           <span className="text-sm font-medium">{project.owner?.name}</span>
           <span className="text-xs text-gray-400 font-normal">Owner</span>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center space-x-2 text-gray-500">
             <Users className="h-4 w-4" />
-            <span className="text-sm">{project.members?.length || 0} Members</span>
+            <span className="text-sm">
+              {project.members?.length || 0} Members
+            </span>
           </div>
           <div className="flex items-center space-x-2 text-gray-500">
             <CheckSquare className="h-4 w-4" />
@@ -88,9 +106,14 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
         <div className="flex items-center space-x-2 text-xs text-gray-500 w-full justify-between">
           <div className="flex items-center space-x-1">
             <Calendar className="h-3.5 w-3.5" />
-            <span>{formatDate(project.startDate)} - {formatDate(project.endDate)}</span>
+            <span>
+              {formatDate(project.startDate)} - {formatDate(project.endDate)}
+            </span>
           </div>
-          <Badge variant="secondary" className="bg-blue-50 text-blue-700 font-normal border-blue-100">
+          <Badge
+            variant="secondary"
+            className="bg-blue-50 text-blue-700 font-normal border-blue-100"
+          >
             Active
           </Badge>
         </div>

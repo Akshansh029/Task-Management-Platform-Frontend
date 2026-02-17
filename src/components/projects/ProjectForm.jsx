@@ -1,54 +1,57 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { useUsers } from '@/lib/hooks/useUsers';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useUsers } from "@/lib/hooks/useUsers";
 
-const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
+// const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
+const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
   const { users } = useUsers();
-  
+
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    ownerId: '',
-    startDate: '',
-    endDate: '',
+    title: "",
+    description: "",
+    ownerId: "",
+    startDate: "",
+    endDate: "",
   });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (project) {
       setFormData({
-        title: project.title || '',
-        description: project.description || '',
-        ownerId: project.owner?.id?.toString() || '',
-        startDate: project.startDate ? project.startDate.split('T')[0] : '',
-        endDate: project.endDate ? project.endDate.split('T')[0] : '',
+        title: project.title || "",
+        description: project.description || "",
+        ownerId: project.owner?.id?.toString() || "",
+        startDate: project.startDate ? project.startDate.split("T")[0] : "",
+        endDate: project.endDate ? project.endDate.split("T")[0] : "",
       });
     } else {
       setFormData({
-        title: '',
-        description: '',
-        ownerId: '',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days later
+        title: "",
+        description: "",
+        ownerId: "",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0], // 30 days later
       });
     }
     setErrors({});
@@ -57,18 +60,18 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
   const validate = () => {
     const newErrors = {};
     if (!formData.title || formData.title.length < 3) {
-      newErrors.title = 'Title must be at least 3 characters';
+      newErrors.title = "Title must be at least 3 characters";
     }
     if (!formData.ownerId) {
-      newErrors.ownerId = 'Please select a project owner';
+      newErrors.ownerId = "Please select a project owner";
     }
-    
+
     if (formData.startDate && formData.endDate) {
       if (new Date(formData.endDate) < new Date(formData.startDate)) {
-        newErrors.endDate = 'End date cannot be before start date';
+        newErrors.endDate = "End date cannot be before start date";
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -79,7 +82,7 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
       // Ensure numeric ID if expected by backend
       const submissionData = {
         ...formData,
-        ownerId: parseInt(formData.ownerId)
+        ownerId: parseInt(formData.ownerId),
       };
       onSubmit(submissionData);
     }
@@ -89,7 +92,9 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{project ? 'Edit Project' : 'Create New Project'}</DialogTitle>
+          <DialogTitle>
+            {project ? "Edit Project" : "Create New Project"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
@@ -98,10 +103,14 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
               id="title"
               placeholder="e.g. Q1 Marketing Campaign"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className={errors.title ? 'border-red-500' : ''}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className={errors.title ? "border-red-500" : ""}
             />
-            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+            {errors.title && (
+              <p className="text-xs text-red-500">{errors.title}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -110,29 +119,35 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
               id="description"
               placeholder="Briefly describe the project goals..."
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="resize-none h-24"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="owner">Project Owner</Label>
-            <Select 
-              value={formData.ownerId} 
-              onValueChange={(value) => setFormData({ ...formData, ownerId: value })}
+            <Select
+              value={formData.ownerId}
+              onValueChange={(value) =>
+                setFormData({ ...formData, ownerId: value })
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Assign an owner" />
               </SelectTrigger>
               <SelectContent>
-                {users.map((user) => (
+                {users.content.map((user) => (
                   <SelectItem key={user.id} value={user.id.toString()}>
                     {user.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            {errors.ownerId && <p className="text-xs text-red-500">{errors.ownerId}</p>}
+            {errors.ownerId && (
+              <p className="text-xs text-red-500">{errors.ownerId}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -142,7 +157,9 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
                 id="startDate"
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, startDate: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -151,10 +168,14 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
                 id="endDate"
                 type="date"
                 value={formData.endDate}
-                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className={errors.endDate ? 'border-red-500' : ''}
+                onChange={(e) =>
+                  setFormData({ ...formData, endDate: e.target.value })
+                }
+                className={errors.endDate ? "border-red-500" : ""}
               />
-              {errors.endDate && <p className="text-xs text-red-500">{errors.endDate}</p>}
+              {errors.endDate && (
+                <p className="text-xs text-red-500">{errors.endDate}</p>
+              )}
             </div>
           </div>
 
@@ -163,13 +184,18 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={loading}
+              // disabled={loading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : project ? 'Update Project' : 'Create Project'}
-            </Button>
+            {/* <Button type="submit" disabled={loading}>
+              {loading
+                ? "Saving..."
+                : project
+                  ? "Update Project"
+                  : "Create Project"}
+            </Button> */}
+            <Button type="submit">Create Project</Button>
           </DialogFooter>
         </form>
       </DialogContent>

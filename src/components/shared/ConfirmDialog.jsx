@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,10 +6,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-const ConfirmDialog = ({ open, onOpenChange, title, description, onConfirm, loading }) => {
+const ConfirmDialog = ({
+  open,
+  onOpenChange,
+  title,
+  description,
+  onConfirm,
+}) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -21,16 +27,17 @@ const ConfirmDialog = ({ open, onOpenChange, title, description, onConfirm, load
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={loading}
+            // disabled={loading}
           >
             Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
-            loading={loading}
+            // loading={loading}
           >
-            {loading ? 'Deleting...' : 'Confirm'}
+            {/* {loading ? 'Deleting...' : 'Confirm'} */}
+            Confirm
           </Button>
         </DialogFooter>
       </DialogContent>

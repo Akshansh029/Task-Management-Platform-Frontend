@@ -1,38 +1,39 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import PageHeader from '@/components/shared/PageHeader';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Plus, Search } from 'lucide-react';
-import UserTable from '@/components/users/UserTable';
-import UserForm from '@/components/users/UserForm';
-import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import { useUsers } from '@/lib/hooks/useUsers';
-import { TableSkeleton } from '@/components/shared/LoadingSkeleton';
-import ErrorBanner from '@/components/shared/ErrorBanner';
-import EmptyState from '@/components/shared/EmptyState';
-import { Users as UsersIcon } from 'lucide-react';
+import React, { useState } from "react";
+import PageHeader from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Plus, Search } from "lucide-react";
+import UserTable from "@/components/users/UserTable";
+import UserForm from "@/components/users/UserForm";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import { useUsers } from "@/lib/hooks/useUsers";
+import { TableSkeleton } from "@/components/shared/LoadingSkeleton";
+import ErrorBanner from "@/components/shared/ErrorBanner";
+import EmptyState from "@/components/shared/EmptyState";
+import { Users as UsersIcon } from "lucide-react";
 
 export default function UsersPage() {
-  const { 
-    users, 
-    isLoading, 
-    isError, 
-    error, 
-    createUser, 
-    updateUser, 
-    deleteUser 
+  const {
+    users,
+    isLoading,
+    isError,
+    error,
+    createUser,
+    updateUser,
+    deleteUser,
   } = useUsers();
-  
-  const [searchQuery, setSearchQuery] = useState('');
+
+  const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = (users?.content || []).filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleCreate = () => {
@@ -74,18 +75,22 @@ export default function UsersPage() {
   if (isError) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Users" subtitle="Manage platform users and roles" actions={actions} />
-        <ErrorBanner message={error.userMessage} />
+        <PageHeader
+          title="Users"
+          subtitle="Manage platform users and roles"
+          actions={actions}
+        />
+        <ErrorBanner message={error.message} />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <PageHeader 
-        title="Users" 
-        subtitle="Manage platform users and roles" 
-        actions={actions} 
+      <PageHeader
+        title="Users"
+        subtitle="Manage platform users and roles"
+        actions={actions}
       />
 
       <div className="relative max-w-sm">
@@ -101,25 +106,28 @@ export default function UsersPage() {
       {isLoading ? (
         <TableSkeleton columns={5} rows={6} />
       ) : filteredUsers.length > 0 ? (
-        <UserTable 
-          users={filteredUsers} 
-          onEdit={handleEdit} 
-          onDelete={handleDeleteClick} 
+        <UserTable
+          users={filteredUsers}
+          onEdit={handleEdit}
+          onDelete={handleDeleteClick}
         />
       ) : (
         <EmptyState
           icon={UsersIcon}
           title={searchQuery ? "No matches found" : "No users yet"}
-          description={searchQuery 
-            ? `Your search for "${searchQuery}" didn't return any results.` 
-            : "Get started by adding your first team member to the platform."
+          description={
+            searchQuery
+              ? `Your search for "${searchQuery}" didn't return any results.`
+              : "Get started by adding your first team member to the platform."
           }
-          action={!searchQuery && (
-            <Button onClick={handleCreate}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add First User
-            </Button>
-          )}
+          action={
+            !searchQuery && (
+              <Button onClick={handleCreate}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add First User
+              </Button>
+            )
+          }
         />
       )}
 
