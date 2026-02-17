@@ -134,6 +134,7 @@ export function useTask(id, projectId) {
     task: taskQuery.data,
     isLoading: taskQuery.isLoading,
     isError: taskQuery.isError,
+    error: taskQuery.error,
     updateTask: updateTaskMutation,
     updateStatus: updateStatusMutation,
     assignUser: assignUserMutation,

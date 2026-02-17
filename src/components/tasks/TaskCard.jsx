@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Calendar, MoreVertical, Edit, Trash2 } from 'lucide-react';
-import { formatDate, getInitials, isOverdue } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import TaskPriorityBadge from './TaskPriorityBadge';
-import LabelBadge from '@/components/labels/LabelBadge';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Calendar, MoreVertical, Edit, Trash2 } from "lucide-react";
+import { formatDate, getInitials, isOverdue } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import TaskPriorityBadge from "./TaskPriorityBadge";
+import LabelBadge from "@/components/labels/LabelBadge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const TaskCard = ({ task, onEdit, onDelete }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/tasks/${task.id}`);
+    router.push(`/tasks/${task.id}?projectId=${task.project?.id}`);
   };
 
   const overdue = isOverdue(task.dueDate, task.status);
 
   return (
-    <Card 
+    <Card
       className="group p-4 space-y-3 hover:shadow-md transition-shadow cursor-pointer border-slate-200"
       onClick={handleClick}
     >
@@ -35,7 +35,11 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
         <div onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-gray-400"
+              >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -44,7 +48,7 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Task
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => onDelete(task)}
                 className="text-red-600 focus:text-red-700 focus:bg-red-50"
               >
@@ -63,7 +67,11 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
       {task.labels && task.labels.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {task.labels.map((label) => (
-            <LabelBadge key={label.id} label={label} className="text-[10px] px-1.5 py-0" />
+            <LabelBadge
+              key={label.id}
+              label={label}
+              className="text-[10px] px-1.5 py-0"
+            />
           ))}
         </div>
       )}
@@ -85,7 +93,9 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
         )}
 
         {task.dueDate && (
-          <div className={`flex items-center space-x-1 text-[10px] ${overdue ? 'text-red-600 font-medium' : 'text-gray-400'}`}>
+          <div
+            className={`flex items-center space-x-1 text-[10px] ${overdue ? "text-red-600 font-medium" : "text-gray-400"}`}
+          >
             <Calendar className="h-3 w-3" />
             <span>{formatDate(task.dueDate)}</span>
           </div>

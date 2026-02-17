@@ -183,7 +183,7 @@ export default function DashboardPage() {
                 {myTasks.map((task) => (
                   <Link
                     key={task.id}
-                    href={`/tasks/${task.id}`}
+                    href={`/tasks/${task.id}?projectId=${task.project?.id}`}
                     className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors group"
                   >
                     <div className="flex items-center space-x-4">

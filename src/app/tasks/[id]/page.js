@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -50,19 +50,24 @@ import { Textarea } from "@/components/ui/textarea";
 export default function TaskDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const projectIdFromUrl = searchParams.get("projectId");
   const { activeUser } = useActiveUser();
 
   const {
     task,
     isLoading,
     isError,
+    error,
     updateTask,
     updateStatus,
     assignUser,
     deleteTask,
     addLabel,
     removeLabel,
-  } = useTask(id, task?.project?.id);
+  } = useTask(id, projectIdFromUrl);
+
+  console.log("project URL: ", projectIdFromUrl);
 
   const { members } = useProject(task?.project?.id);
   const { comments, createComment, updateComment, deleteComment } =
@@ -104,7 +109,10 @@ export default function TaskDetailPage() {
   };
 
   if (isLoading) return <DetailSkeleton />;
-  if (isError) return <ErrorBanner message="Failed to load task details." />;
+  if (isError)
+    return (
+      <ErrorBanner message={error?.message ?? "Failed to load task details"} />
+    );
   if (!task) return <ErrorBanner message="Task not found." />;
 
   const overdue = isOverdue(task.dueDate, task.status);
