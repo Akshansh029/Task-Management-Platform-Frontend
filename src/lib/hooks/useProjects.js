@@ -145,8 +145,8 @@ export function useProject(id) {
 
   return {
     project: projectQuery.data,
-    members: membersQuery.data,
-    tasks: tasksQuery.data,
+    members: membersQuery.data || { content: [] },
+    tasks: tasksQuery.data || { content: [] },
     isLoading:
       projectQuery.isLoading || membersQuery.isLoading || tasksQuery.isLoading,
     isError: projectQuery.isError,

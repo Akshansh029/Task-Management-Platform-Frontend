@@ -119,6 +119,7 @@ export default function ProjectDetailPage() {
             onEditTask={handleEditTask}
             onDeleteTask={handleDeleteTaskClick}
             onAddTask={handleAddTask}
+            projectId={project.id}
           />
         </TabsContent>
 

@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-const TaskCard = ({ task, onEdit, onDelete }) => {
+const TaskCard = ({ task, onEdit, onDelete, projectId }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/tasks/${task.id}?projectId=${task.project?.id}`);
+    router.push(`/tasks/${task.id}?projectId=${projectId}`);
   };
 
   const overdue = isOverdue(task.dueDate, task.status);

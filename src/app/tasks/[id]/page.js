@@ -10,7 +10,6 @@ import {
   Tag as TagIcon,
   Trash2,
   Clock,
-  ExternalLink,
   Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -67,9 +66,7 @@ export default function TaskDetailPage() {
     removeLabel,
   } = useTask(id, projectIdFromUrl);
 
-  console.log("project URL: ", projectIdFromUrl);
-
-  const { members } = useProject(task?.project?.id);
+  const { members } = useProject(projectIdFromUrl);
   const { comments, createComment, updateComment, deleteComment } =
     useComments(id);
 
@@ -188,7 +185,7 @@ export default function TaskDetailPage() {
                     <Button
                       size="sm"
                       onClick={handleUpdateDescription}
-                      disabled={updateTask.isPending}
+                      // disabled={updateTask.isPending}
                     >
                       Save Changes
                     </Button>
@@ -196,7 +193,7 @@ export default function TaskDetailPage() {
                       size="sm"
                       variant="ghost"
                       onClick={() => setIsEditingDesc(false)}
-                      disabled={updateTask.isPending}
+                      // disabled={updateTask.isPending}
                     >
                       Cancel
                     </Button>
@@ -299,7 +296,7 @@ export default function TaskDetailPage() {
 
               {/* Assignee */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block font-semibold flex items-center">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] flex items-center">
                   Assignee
                 </label>
                 <Select
@@ -307,23 +304,25 @@ export default function TaskDetailPage() {
                   onValueChange={(val) => assignUser.mutate(parseInt(val))}
                 >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
-                    <SelectValue placeholder="Unassigned">
-                      {task.assignee && (
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback className="text-[8px] bg-blue-50 text-blue-700">
-                              {getInitials(task.assignee.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm font-medium">
-                            {task.assignee.name}
-                          </span>
-                        </div>
-                      )}
+                    <SelectValue
+                      placeholder={task.assigneeName || "Unassigned"}
+                    >
+                      {/* {task.assigneeName && ( */}
+                      {/* <div className="flex items-center space-x-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarFallback className="text-[8px] bg-blue-50 text-blue-700">
+                            {getInitials(task.assigneeName)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">
+                          {task.assigneeName}
+                        </span>
+                      </div> */}
+                      {/* )} */}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {members.map((m) => (
+                    {members.content.map((m) => (
                       <SelectItem key={m.id} value={m.id.toString()}>
                         <div className="flex items-center space-x-2">
                           <Avatar className="h-5 w-5">
