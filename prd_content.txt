@@ -1,0 +1,666 @@
+FrontendProductRequirements
+Document
+TaskManagement&CollaborationPlatform
+Preparedfor:GoogleJules(Antigravity)
+DocumentVersion:1.0
+Date:February2026
+FrontendStack Next.js15(AppRouter)|JavaScript|TailwindCSS|shadcn/ui
+|Axios|TanStackReactQuery
+BackendAPIBaseURL http://localhost:8080/api(dev)|configurablevia
+NEXT_PUBLIC_API_BASE_URL
+DesignStyle Modern,minimal,sleek—neutralpalette(slate/gray)withblue
+accent
+DeploymentTarget Vercel
+Auth Noauthinv1—userisselectedfromdropdownas'activeuser'
+tosimulatesession
+1.ProjectOverview
+ThisdocumentdefinesallfrontendrequirementsfortheTaskManagement&
+CollaborationPlatform.ItiswrittenspecificallyforanAIcodingagent(Google
+Jules/Antigravity)andmustbefollowedprecisely.Theagentshouldgeneratea
+complete,workingNext.jsapplicationbasedsolelyonthespecificationsbelow.
+1.1WhattheAppDoes
+–Userscancreateandmanageprojects
+–Eachprojecthasanownerandteammembers
+–Tasksarecreatedinsideprojectsandassignedtomembers
+–Taskshavestatuses(TODO,IN_PROGRESS,DONE)andpriorities(LOW,MEDIUM,
+HIGH,URGENT)
+–Teammemberscancommentontasks
+–Labelscanbecreatedandappliedtotasksforcategorisation
+–AlldataispersistedintheSpringBootbackendviaRESTAPI
+1.2GuidingDesignPrinciples
+–Minimal—noclutter,onlywhatisneededisshown
+–Functional—everyUIelementhasaclearpurpose
+–Fast—useReactQuerycaching;showskeletonsnotblankscreens
+–Consistent—useshadcn/uicomponentlibraryeverywhere
+–Responsive—workson1280px+desktopand375px+mobile
+1.3Colour&TypographyTokens
+Token Value Usage
+Primary #1D4ED8 Buttons,links,activestates,
+badges
+Background #F8FAFC Pagebackground
+Surface #FFFFFF Cards,modals,sidebars
+Border #E5E7EB Allbordersanddividers
+TextPrimary #111827 Headings,importantlabels
+TextSecondary #6B7280 Subtitles,metadata,placeholders
+Danger #DC2626 Deleteactions,errorstates
+Success #16A34A Donestatus,successtoasts
+Warning #D97706 IN_PROGRESSstatus,mediumpriority
+Font Inter(GoogleFonts)Alltextthroughouttheapp
+2.ProjectStructure
+TheapplicationusestheNext.js15AppRouter.Allcodelivesundersrc/.Strict
+folderconventionsmustbefollowed.
+taskmanager-frontend/
+├──public/
+│ └──favicon.ico
+├──src/
+│ ├──app/ #Next.jsAppRouterpages
+│ │ ├──layout.js #Rootlayout(providers,navbar)
+│ │ ├──page.js #Dashboard/homeredirect
+│ │ ├──globals.css #Tailwindbase+customCSSvars
+│ │ ├──users/
+│ │ │ └──page.js #Usermanagementpage
+│ │ ├──projects/
+│ │ │ ├──page.js #Projectslistpage
+│ │ │ └──[id]/
+│ │ │ └──page.js #Projectdetailpage
+│ │ ├──tasks/
+│ │ │ └──[id]/
+│ │ │ └──page.js #Taskdetailpage
+│ │ └──labels/
+│ │ └──page.js #Labelsmanagementpage
+│ ├──components/
+│ │ ├──ui/ #shadcn/ui(auto-generated,donot
+edit)
+│ │ ├──layout/
+│ │ │ ├──Navbar.jsx
+│ │ │ ├──Sidebar.jsx
+│ │ │ └──ActiveUserSelector.jsx
+│ │ ├──users/
+│ │ │ ├──UserTable.jsx
+│ │ │ ├──UserForm.jsx
+│ │ │ └──UserRoleBadge.jsx
+│ │ ├──projects/
+│ │ │ ├──ProjectCard.jsx
+│ │ │ ├──ProjectGrid.jsx
+│ │ │ ├──ProjectForm.jsx
+│ │ │ ├──ProjectHeader.jsx
+│ │ │ └──MemberList.jsx
+│ │ ├──tasks/
+│ │ │ ├──TaskCard.jsx
+│ │ │ ├──TaskBoard.jsx #Kanbancolumns
+│ │ │ ├──TaskForm.jsx
+│ │ │ ├──TaskDetail.jsx
+│ │ │ ├──TaskStatusBadge.jsx
+│ │ │ └──TaskPriorityBadge.jsx
+│ │ ├──comments/
+│ │ │ ├──CommentList.jsx
+│ │ │ ├──CommentItem.jsx
+│ │ │ └──CommentForm.jsx
+│ │ ├──labels/
+│ │ │ ├──LabelBadge.jsx
+│ │ │ ├──LabelSelector.jsx
+│ │ │ └──LabelForm.jsx
+│ │ └──shared/
+│ │ ├──PageHeader.jsx #Consistentpagetitle+actionsbar
+│ │ ├──EmptyState.jsx #Illustratedemptystates
+│ │ ├──LoadingSkeleton.jsx#Skeletonloaders
+│ │ ├──ConfirmDialog.jsx #Deleteconfirmation
+│ │ └──ErrorBanner.jsx #Inlineerrordisplay
+│ ├──lib/
+│ │ ├──api/
+│ │ │ ├──client.js #Axiosinstance
+│ │ │ ├──users.js
+│ │ │ ├──projects.js
+│ │ │ ├──tasks.js
+│ │ │ ├──comments.js
+│ │ │ └──labels.js
+│ │ ├──hooks/
+│ │ │ ├──useUsers.js
+│ │ │ ├──useProjects.js
+│ │ │ ├──useTasks.js
+│ │ │ ├──useComments.js
+│ │ │ └──useLabels.js
+│ │ └──utils.js #formatDate,cn(),constants
+│ └──providers/
+│ └──QueryProvider.jsx #TanStackQuery+Toaster
+├──.env.local
+├──components.json #shadcnconfig
+├──next.config.js
+├──tailwind.config.js
+└──package.json
+3.DesignSystem&ComponentRules
+3.1LayoutShell
+Everypageusesafixedtopnavbarandafixedleftsidebar.Pagecontentscrolls
+insidetheremainingspace.
+Zone Description
+Navbar(top,h-14) Logoleft|Appname|Activeuserselectorright
+Sidebar(left,w-56) Navigationlinks:Dashboard,Projects,Users,Labels
+Contentarea Paddedcontainer(max-w-7xl,px-6,py-8),scrollable
+3.2Navbar—Navbar.jsx
+–Fixedtop,height56px,whitebackground,bottomborder(border-bborder-gray-
+200)
+–Left:smallbluesquareicon+'TaskManager'textinfont-semibold
+–Right:ActiveUserSelectorcomponent(dropdownofallusers—simulates
+logged-inuser)
+–Theselecteduser'sIDisstoredinReactcontextandusedasauthorId/
+actorIdinallPOST/PATCHrequests
+3.3Sidebar—Sidebar.jsx
+–Fixedleft,width224px,whitebackground,rightborder
+–Navigationitemswithlucide-reacticons:
+–LayoutDashboard—Dashboard(/)
+–FolderKanban—Projects(/projects)
+–Users—Users(/users)
+–Tag—Labels(/labels)
+–Activelink:bg-blue-50text-blue-700font-medium,leftbluebar(border-l-2
+border-blue-700)
+–Inactive:text-gray-600hover:bg-gray-50
+3.4shadcn/uiComponentstoInstall
+Component UsedIn
+button Allactionbuttons
+input Alltextinputs
+label Formfieldlabels
+textarea Descriptionfields
+select Role,status,priority,assigneedropdowns
+dialog Create/Editmodals
+table Userstable
+card Projectcards,taskcards
+badge Rolebadges,statusbadges,labelchips
+toast/toaster Successanderrornotifications
+dropdown-menu Actionsmenus(edit/delete)
+separator Sectiondividers
+avatar Useravatars(initialsfallback)
+skeleton Loadingplaceholderstates
+scroll-area Scrollablecommentlist
+popover Labelselectorpopoverontaskdetail
+command Searchablemember/labelpicker
+tooltip Iconbuttontooltips
+3.5Status&PriorityBadgeColours
+Value BadgeColourClass
+TODO bg-slate-100text-slate-700
+IN_PROGRESS bg-amber-100text-amber-700
+DONE bg-green-100text-green-700
+LOW bg-slate-100text-slate-600
+MEDIUM bg-amber-100text-amber-700
+HIGH bg-red-100text-red-700
+ADMIN bg-purple-100text-purple-700
+MEMBER bg-blue-100text-blue-700
+VIEWER bg-gray-100text-gray-600
+3.6SharedComponentsSpec
+PageHeader.jsx
+–Props:title(string),subtitle(string,optional),actions(ReactNode,
+optional)
+–Renders:largeh1title,mutedsubtitlebelow,actionsslotonfarright
+–Addsabottomseparatorbelowtheheaderblock
+EmptyState.jsx
+–Props:icon(lucidecomponent),title,description,action(ReactNode,
+optional)
+–Centredlayoutwithlargemutedicon,title,description,optionalCTAbutton
+–Usedwhenlistsareempty(noprojects,notasks,etc.)
+LoadingSkeleton.jsx
+–Exports:TableSkeleton,CardGridSkeleton,DetailSkeleton
+–UseshadcnSkeletoncomponentwithappropriateheight/widthplaceholders
+ConfirmDialog.jsx
+–Props:open,onOpenChange,title,description,onConfirm,loading
+–UsesshadcnDialogwithareddestructiveConfirmbutton
+–Alwaysusedbeforedeleteoperations
+4.PagesSpecification
+4.1Dashboard—/
+Thelandingpage.Providesaquickstatsoverviewandshortcutstorecentprojects.
+Layout
+–PageHeader:title='Dashboard',subtitle='Overviewofyourworkspace'
+–Statsrow:4statcardsinagrid(grid-cols-4)
+–Below:2-columngrid—recentprojects(left)+quicktasksummary(right)
+StatCards(4cards)
+Card DataSource Icon
+TotalProjects GET/api/projects—countarray
+lengthFolderKanban
+TotalTasks GET/api/tasks—countarraylengthCheckSquare
+TasksInProgress GET/api/tasks—filter
+status=IN_PROGRESSClock
+TotalUsers GET/api/users—countarraylengthUsers
+RecentProjectsSection
+–Title:'RecentProjects'|Link:'Viewall'(navigatesto/projects)
+–Showslast4projects(slicefromprojectsarray)
+–Eachrow:projecttitle,ownername,taskcountbadge,createddate
+–Clickonprojecttitlenavigatesto/projects/[id]
+MyTasksSection
+–Title:'MyTasks'—taskswhereassignee.id===activeUser.id
+–Showsupto5tasks
+–Eachrow:tasktitle,statusbadge,prioritybadge,projectname
+–Clicknavigatesto/tasks/[id]
+4.2ProjectsList—/projects
+Displaysallprojectsasacardgrid.Supportsfilteringandprojectcreation.
+Layout
+–PageHeader:title='Projects'|actionbutton:'NewProject'(openscreate
+dialog)
+–Filterbarbelowheader:searchinput(filterbytitleclient-side)+noother
+filtersneeded
+–ProjectGridcomponent:responsivegrid(grid-cols-1sm:grid-cols-2lg:grid-
+cols-3)
+–Eachcell:ProjectCardcomponent
+–Emptystateifnoprojects:EmptyStatewithFolderPlusicon
+ProjectCard.jsx
+–Whitecardwithsubtleshadowandhover:shadow-mdtransition
+–Cardtop:colouredaccentbar(5px,blue)
+–Title:font-semiboldtext-gray-900
+–Description:2-lineclamp,text-smtext-gray-500
+–Metarow:owneravatar+name|membercount(Usersicon)|taskcount
+(CheckSquareicon)
+–Footer:startdate-enddate|Actionsdropdown(Edit,Delete)—top-right
+ofcard
+–Clickoncardbody(notdropdown)navigatesto/projects/[id]
+ProjectForm.jsx(Create/EditModal)
+–Dialogtitle:'CreateProject'or'EditProject'
+–Fields:
+–Title—Input,required
+–Description—Textarea,optional
+–Owner—Selectofallusers(showsusername)
+–StartDate—Inputtype='date'
+–EndDate—Inputtype='date'
+–Buttons:Cancel|Save(primaryblue)
+–Onsubmit:POST/api/projectsorPUT/api/projects/{id}
+APICallsforThisPage
+Action Method+URL
+Loadprojects GET/api/projects
+Createproject POST/api/projects
+Updateproject PUT/api/projects/{id}
+Deleteproject DELETE/api/projects/{id}
+4.3ProjectDetail—/projects/[id]
+Therichestpage.Showsprojectinfo,membermanagement,andthetaskKanbanboard.
+Layout(toptobottom)
+–ProjectHeadercomponent(top)
+–Two-tablayout:'Board'tab(default)|'Members'tab
+–Boardtab:TaskBoardcomponent
+–Memberstab:MemberListcomponent
+ProjectHeader.jsx
+–Projecttitle(text-2xlfont-bold)+Editbutton(pencilicon,icon-only)
+–Descriptioninmutedtextbelowtitle
+–Metachipsrow:owneravatar+name|start-enddates|membercount|task
+count
+–'AddTask'button(primary)ontheright—opensTaskFormdialog
+TaskBoard.jsx—KanbanBoard
+–Threecolumnssidebyside:TODO|IN_PROGRESS|DONE
+–Columnheader:statuslabel+countbadge(e.g.'TODO3')
+–Eachcolumn:verticalstackofTaskCardcomponents
+–Emptycolumn:smalldashedplaceholderbox
+–'+AddTask'textbuttonatbottomofTODOcolumn
+TaskCard.jsx
+–Whitecard,rounded-lg,border,hover:shadow-sm,cursor-pointer
+–Toprow:prioritybadge(left)|actionsdropdown(right)—Edit,Delete
+–Tasktitle:font-mediumtext-sm
+–Labelsrow:colouredLabelBadgechips(ifany)
+–Footer:assigneeavatar+name(left)|duedatewithCalendarIcon(right,red
+ifoverdue)
+–Clickoncard(notdropdown)navigatesto/tasks/[taskId]
+MemberList.jsx
+–Sectiontitle:'TeamMembers'+'AddMember'button
+–Table:Avatar|Name|Email|Rolebadge|Removebutton
+–Removebutton:onlyvisibleifactiveUserisownerorADMIN
+–AddMember:opensCommandpopover—searchablelistofallusers,clickto
+add
+APICallsforThisPage
+Action Method+URL
+Loadprojectdetails GET/api/projects/{id}
+Loadprojecttasks GET/api/projects/{id}/tasks
+Loadprojectmembers GET/api/projects/{id}/members
+Createtask POST/api/projects/{id}/tasks
+Addmember POST/api/projects/{id}/members/{userId}
+Removemember DELETE/api/projects/{id}/members/{userId}
+Updateproject PUT/api/projects/{id}
+Deleteproject DELETE/api/projects/{id}
+Deletetask DELETE/api/tasks/{id}
+4.4TaskDetail—/tasks/[id]
+Full-pageviewofasingletaskwithallmetadata,labelmanagement,andcomments.
+Layout—TwoColumn(lg:grid-cols-3)
+–Leftcolumn(2/3width):tasktitle,description,commentssection
+–Rightcolumn(1/3width):metadatapanel(status,priority,assignee,labels,
+dates)
+LeftColumn
+–Backlink:'←Backtoproject'(navigatesto/projects/[task.project.id])
+–Tasktitle:text-2xlfont-bold,editableinline(clicktoedit,blurtosave)
+–Description:renderedasplaintext,'Edit'buttonopenstextarea
+–Separator
+–Commentssectionheading:'Comments'+count
+–CommentList:scrollablelistofCommentItem
+–CommentForm:textarea+'PostComment'buttonatbottom
+RightColumn—MetadataPanel
+–Whitecardwithpadding,stickytop-8
+–Eachfieldrow:label(text-xsuppercasetext-gray-400)+valuebelow
+–Status:Select(TODO/IN_PROGRESS/DONE)—savesonchangeviaPATCH
+/api/tasks/{id}/status
+–Priority:Select(LOW/MEDIUM/HIGH/URGENT)—savesonupdate
+–Assignee:Selectofprojectmembers—savesviaPATCH
+/api/tasks/{id}/assign/{userId}
+–Labels:chipswithXtoremove+Popoverbuttontoaddmore
+–DueDate:datedisplay—redifpastdue
+–Project:linkto/projects/[id]
+–CreatedAt:formatteddate
+CommentItem.jsx
+–Avatar(initials)+authorname+relativetimestamp(e.g.'2hoursago')
+–Commentcontenttext
+–Edit/Deleteicons—onlyvisibleifcomment.author.id===activeUser.id
+–Edit:inlinetextareareplacescontent,Save/Cancelbuttons
+APICallsforThisPage
+Action Method+URL
+Loadtaskdetails GET/api/tasks/{id}
+Updatetask PUT/api/tasks/{id}
+Updatestatus PATCH/api/tasks/{id}/status
+Assignuser PATCH/api/tasks/{id}/assign/{userId}
+Addlabel POST/api/tasks/{taskId}/labels/{labelId}
+Removelabel DELETE/api/tasks/{taskId}/labels/{labelId}
+Loadcomments GET/api/tasks/{id}/comments
+Postcomment POST/api/tasks/{id}/comments
+Editcomment PUT/api/comments/{id}
+Deletecomment DELETE/api/comments/{id}
+Deletetask DELETE/api/tasks/{id}
+4.5Users—/users
+Admin-stylepagetoviewandmanageallplatformusers.
+Layout
+–PageHeader:title='Users'|action:'NewUser'button
+–Searchinputtofiltertablebynameoremail(client-side)
+–UserTablecomponent
+UserTable.jsx
+–Columns:Avatar|Name|Email|Role|Created|Actions
+–Avatar:circlewithuserinitials,bg-blue-100text-blue-700
+–Role:UserRoleBadge(colouredbadge)
+–Created:formatteddate
+–Actionscolumn:Editiconbutton|Deleteiconbutton
+–DeletetriggersConfirmDialogbeforecallingDELETE/api/users/{id}
+UserForm.jsx
+–Dialog:'CreateUser'or'EditUser'
+–Fields:Name(Input,required)|Email(Inputtype=email,required)|Role
+(Select)
+–Roleoptions:ADMIN|MEMBER|VIEWER
+–Oncreate:POST/api/users
+–Onedit:PUT/api/users/{id}
+APICallsforThisPage
+Action Method+URL
+Loadusers GET/api/users
+Createuser POST/api/users
+Updateuser PUT/api/users/{id}
+Deleteuser DELETE/api/users/{id}
+4.6Labels—/labels
+Managereusablelabelsthatcanbeappliedtoanytask.
+Layout
+–PageHeader:title='Labels'|action:'NewLabel'button
+–Responsivegridoflabelcards(grid-cols-2md:grid-cols-3lg:grid-cols-4)
+LabelCard
+–Whitecard,leftcolouredborder(4px,label.color)
+–Labelnameinfont-medium
+–Colourswatchcircleshowinglabel.color
+–Editicon+Deleteicon(topright)
+LabelForm.jsx
+–Dialog:'CreateLabel'or'EditLabel'
+–Fields:Name(Input,required)|Color(Inputtype=color+hextextinput)
+–Previewchipshowingnameonselectedcolour
+APICallsforThisPage
+Action Method+URL
+Loadlabels GET/api/labels
+Createlabel POST/api/labels
+Deletelabel DELETE/api/labels/{id}
+5.FullAPIReference
+BackendbaseURL:NEXT_PUBLIC_API_BASE_URL(default:http://localhost:8080/api)
+Allrequest/responsebodiesareJSON.Content-Type:application/jsononall
+POST/PUT/PATCH.
+5.1UsersAPI
+MethodURL RequestBody Response
+GET /api/users — ArrayofUserResponse
+GET /api/users/{id} — UserResponse
+POST /api/users {name,email,role} 201UserResponse
+PUT /api/users/{id} {name,email,role} UserResponse
+DELETE /api/users/{id} — 204NoContent
+UserResponseshape
+{id,name,email,role,createdAt}
+5.2ProjectsAPI
+MethodURL RequestBody Response
+GET /api/projects — Arrayof
+ProjectResponse
+GET /api/projects/{id} — ProjectResponse
+POST /api/projects {title,
+description,
+ownerId,
+startDate,
+endDate}201
+ProjectResponse
+PUT /api/projects/{id} {title,
+description,
+ownerId,ProjectResponse
+startDate,
+endDate}
+DELETE /api/projects/{id} — 204NoContent
+POST /api/projects/{id}/members/{userId}— 200OK
+DELETE /api/projects/{id}/members/{userId}— 200OK
+GET /api/projects/{id}/members — Arrayof
+UserResponse
+GET /api/projects/{id}/tasks — Arrayof
+TaskResponse
+ProjectResponseshape
+{id,title,description,startDate,endDate,createdAt,
+owner:{id,name,email,role},
+members:[UserResponse],
+tasks:[TaskResponse]}
+5.3TasksAPI
+MethodURL RequestBody Response
+GET /api/tasks — Arrayof
+TaskResponse
+GET /api/tasks/{id} — TaskResponse
+GET /api/projects/{id}/tasks — Arrayof
+TaskResponse
+POST /api/projects/{id}/tasks {title,
+description,
+status,priority,
+dueDate,
+assigneeId}201
+TaskResponse
+PUT /api/tasks/{id} {title,
+description,
+status,priority,
+dueDate,
+assigneeId}TaskResponse
+PATCH /api/tasks/{id}/status {status} TaskResponse
+PATCH /api/tasks/{id}/assign/{userId} — TaskResponse
+DELETE /api/tasks/{id} — 204No
+Content
+POST /api/tasks/{taskId}/labels/{labelId}— 200OK
+DELETE /api/tasks/{taskId}/labels/{labelId}— 200OK
+TaskResponseshape
+{id,title,description,status,priority,dueDate,createdAt,
+project:{id,title},
+assignee:{id,name,email}|null,
+labels:[LabelResponse],
+comments:[CommentResponse]}
+5.4CommentsAPI
+MethodURL RequestBody Response
+GET /api/tasks/{id}/comments— Arrayof
+CommentResponse
+POST /api/tasks/{id}/comments{content,authorId}201CommentResponse
+PUT /api/comments/{id} {content} CommentResponse
+DELETE /api/comments/{id} — 204NoContent
+CommentResponseshape
+{id,content,createdAt,
+author:{id,name,email},
+task:{id,title}}
+5.5LabelsAPI
+MethodURL RequestBody Response
+GET /api/labels — ArrayofLabelResponse
+POST /api/labels {name,color} 201LabelResponse
+DELETE /api/labels/{id} — 204NoContent
+LabelResponseshape
+{id,name,color}
+6.DataLayer—API&ReactQuery
+6.1AxiosClient—src/lib/api/client.js
+–CreateaxiosinstancewithbaseURLfromNEXT_PUBLIC_API_BASE_URL
+–Defaultheader:Content-Type:application/json
+–Responseinterceptor:logerrors,extracterror.response.data.messagefor
+toast
+6.2ReactQueryConfiguration
+–staleTime:60*1000(1minute)
+–refetchOnWindowFocus:false
+–WrapappinQueryClientProviderinsideQueryProvider.jsx
+–QueryProvidermustbemarked'useclient'
+6.3QueryKeyConventions
+Data QueryKey
+Allusers ['users']
+Singleuser ['users',id]
+Allprojects ['projects']
+Singleproject ['projects',id]
+Projecttasks ['projects',id,'tasks']
+Projectmembers ['projects',id,'members']
+Alltasks ['tasks']
+Singletask ['tasks',id]
+Taskcomments ['tasks',id,'comments']
+Alllabels ['labels']
+6.4MutationPatterns
+–EverymutationmustcallqueryClient.invalidateQueriesonsuccess
+–Everymutationmustcalltoast({title:'Error',description,variant:
+'destructive'})onerror
+–Showsuccesstoastaftercreate/update/delete
+–Disablesubmitbuttonswhilemutationispending(usemutation.isPending)
+7.ActiveUserSimulation(NoAuth)
+SinceSpringSecurityisnotyetimplemented,thefrontendsimulatesalogged-inuser
+viaaglobalcontext.
+7.1ActiveUserContext
+–Createsrc/providers/ActiveUserContext.jsx
+–FetchesallusersfromGET/api/usersonmount
+–StoresselectedUserinstate(default:firstuserinlist)
+–Exposes:{activeUser,setActiveUser}viauseContext
+7.2ActiveUserSelector.jsx
+–ShowninNavbartop-right
+–Dropdown(shadcnSelectorDropdownMenu)listingalluserswithavatar+name
+–Onchange:updatesactiveUserincontext
+–Displayscurrentuseravatar+nameinclosedstate
+7.3UsageinAPICalls
+Action WhereactiveUser.idisused
+Postacomment authorIdinPOST/api/tasks/{id}/commentsbody
+Createaproject ownerIdinPOST/api/projectsbody
+Authorizationchecks Comparewithproject.owner.idorcomment.author.idbefore
+showingedit/deletecontrols
+8.Forms&ValidationRules
+AllformsusecontrolledReactstate(noexternalformlibraryrequired).Validateon
+submit.
+Form Field Validation
+UserForm name Required,min3chars,max100chars
+UserForm email Required,mustmatchemailregex
+UserForm role Required,oneof:ADMIN,MEMBER,VIEWER
+ProjectForm title Required,min3chars,max100chars
+ProjectForm description Optional,max1000chars
+ProjectForm ownerId Required,mustselectauser
+ProjectForm startDate Optional
+ProjectForm endDate Optional,mustbeafterstartDateifbothset
+TaskForm title Required,min3chars,max200chars
+TaskForm description Optional,max2000chars
+TaskForm status Required,default:TODO
+TaskForm priority Required,default:MEDIUM
+TaskForm dueDate Optional
+TaskForm assigneeId Optional,mustbeaprojectmemberifset
+CommentForm content Required,min1char,max1000chars
+LabelForm name Required,min2chars,max30chars
+LabelForm color Optional,mustbevalidhex(#RRGGBB)
+Showinlinevalidationerrorsbeloweachfieldintext-smtext-red-500.
+Disablesubmitbuttonwhilemutationispending.
+Resetformstateondialogclose.
+9.Error&LoadingStates
+9.1LoadingStates
+Context ComponenttoUse
+Pageloading(table) TableSkeleton—5rowsofgrayskeletonbars
+Pageloading(cards) CardGridSkeleton—6card-shapedskeletons
+Detailpageloading DetailSkeleton—title+sidepanelplaceholders
+Buttonsubmitting Spinnericoninsidebutton+disabled
+Inlinedataloading SmallSkeletoninline
+9.2ErrorStates
+–Ifapage-levelqueryfails:showErrorBannerwitherrormessageand'Retry'
+button
+–Ifamutationfails:showdestructivetoastwithbackenderrormessage
+–Ifaresourceisnotfound(404):showEmptyStatewith'NotFound'message
+–Networkerror:showtoast'Couldnotreachserver.Isthebackendrunning?'
+9.3ToastSpecification
+–Success:title='Success',description='[Entity][action]successfully',no
+variant
+–Error:title='Error',description=error.response?.data?.message,
+variant='destructive'
+–Position:bottom-right,auto-dismissafter4seconds
+10.Utilities—src/lib/utils.js
+Utility Description
+cn(...inputs) clsx+tailwind-mergeforconditionalclassNames(already
+inshadcn)
+formatDate(dateStr) FormatISOdateto'Jan15,2026'using
+Intl.DateTimeFormat
+formatRelativeTime(dateStr)Formattorelativetimee.g.'2hoursago'using
+Intl.RelativeTimeFormat
+getInitials(name) Extractinitialsfromfullnamee.g.'JohnDoe'->'JD'
+isOverdue(dueDateStr) ReturntrueifdueDateisinthepastandstatus!==DONE
+getStatusColor(status) ReturnTailwindclassstringforstatusbadge
+getPriorityColor(priority)ReturnTailwindclassstringforprioritybadge
+getRoleColor(role) ReturnTailwindclassstringforrolebadge
+11.PackageDependencies
+Package Purpose
+next Appframework
+react UIlibrary
+react-dom DOMrendering
+axios HTTPclient
+@tanstack/react-query Serverstatemanagement
+lucide-react Iconset
+clsx ConditionalclassNames
+tailwind-merge MergeTailwindclasses
+class-variance-authority shadcn/uivariantsystem
+next/font(Inter) Fontoptimisation
+shadcn/uiComponentstoInstall
+npxshadcn@latestaddbuttoninputlabeltextareaselectdialog
+npxshadcn@latestaddtablecardbadgetoastdropdown-menu
+npxshadcn@latestaddseparatoravatarskeletonscroll-area
+npxshadcn@latestaddpopovercommandtooltip
+EnvironmentVariables(.env.local)
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
+12.RecommendedImplementationOrderforAgent
+Followthisexactordertoalloweachsteptobuildontheprevious.
+1.InstallNext.js,Tailwind,shadcn/ui.Runnpxshadcn@latestinitandinstall
+allrequiredcomponents.
+2.Create.env.localwithNEXT_PUBLIC_API_BASE_URL.
+3.Createsrc/lib/api/client.js(Axiosinstance).
+4.CreateallfiveAPImodules:users.js,projects.js,tasks.js,comments.js,
+labels.js.
+5.Createsrc/providers/QueryProvider.jsxandActiveUserContext.jsx.
+6.Createsrc/app/layout.jswithNavbar,Sidebar,providers,andToaster.
+7.Createsharedcomponents:PageHeader,EmptyState,LoadingSkeleton,
+ConfirmDialog,ErrorBanner.
+8.Createsrc/lib/utils.jswithallutilityfunctions.
+9.BuildUserspage(/users)—thesimplestCRUDpage.Getitworkingend-to-end.
+10.BuildLabelspage(/labels).
+11.BuildProjectslistpage(/projects).
+12.BuildProjectDetailpage(/projects/[id])withTaskBoardandMemberList.
+13.BuildTaskDetailpage(/tasks/[id])withmetadatapanelandcomments.
+14.BuildDashboardpage(/)withstatsandsummarysections.
+15.Finalpass:ensureallloadingskeletons,emptystates,anderrortoastsare
+inplace.
+13.CriticalNotesfortheAIAgent
+DoNOTuseTypeScript.
+AllfilesmustbeplainJavaScript(.js/.jsx).Donotaddtypeannotations.
+DoNOTuse'useserver'onAPIfiles.
+APIcallshappenclient-sideviaAxios.Markallinteractivecomponentswith'use
+client'.
+Matchbackendfieldnamesexactly.
+Thebackendreturns:ownerId(notowner_id),assigneeId(notassignee_id),createdAt
+(notcreated_at).CheckSection5shapescarefully.
+Noauthheadersneededinv1.
+TheAxiosinterceptorshouldNOTaddAuthorizationheaders.Thatcomesinafuture
+phase.
+Alwaysuseshadcn/uicomponents.
+DonotwriterawHTMLbuttons,inputs,orselects.Usetheshadcnequivalents
+throughout.
+Alwaysshowloadinganderrorstates.
+NeverrenderapagewithouthandlingisLoadingandisErrorfromReactQuery.
+Invalidatequeriesaftermutations.
+Aftereverycreate/update/delete,callqueryClient.invalidateQuerieswiththecorrect
+querykey(seeSection6.3).
+DoNOThard-codeuserIDs.
+AllauthorIdandactorIdvaluesmustcomefromtheactiveUsercontext,neverhard-
+coded.
+DateformatfrombackendisISO8601.
+AlwaysparsedatesthroughformatDate()orformatRelativeTime()beforedisplaying.
+CORSisalreadyconfiguredinthebackend.
+DonotaddanyCORSworkaroundsinNext.js.DirectAxioscallstolocalhost:8080will
+work.
+TheappisaClient-SideRenderedSPA,notSSR.
+DonotusegetServerSideProps,getStaticProps,oranyNext.jsserveractions.All
+datafetchingisdonewithReactQueryontheclient.
+—EndofDocument—
