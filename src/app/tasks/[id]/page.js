@@ -1,73 +1,78 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Target, 
-  AlertCircle, 
-  User as UserIcon, 
+import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Target,
+  User as UserIcon,
   Tag as TagIcon,
   Trash2,
   Clock,
   ExternalLink,
-  Edit
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useTask } from '@/lib/hooks/useTasks';
-import { useProject } from '@/lib/hooks/useProjects';
-import { useComments } from '@/lib/hooks/useComments';
-import { useActiveUser } from '@/providers/ActiveUserContext';
-import { formatDate, getInitials, isOverdue, TASK_STATUSES, TASK_PRIORITIES } from '@/lib/utils';
-import TaskStatusBadge from '@/components/tasks/TaskStatusBadge';
-import TaskPriorityBadge from '@/components/tasks/TaskPriorityBadge';
-import CommentList from '@/components/comments/CommentList';
-import CommentForm from '@/components/comments/CommentForm';
-import LabelBadge from '@/components/labels/LabelBadge';
-import LabelSelector from '@/components/labels/LabelSelector';
-import { DetailSkeleton } from '@/components/shared/LoadingSkeleton';
-import ErrorBanner from '@/components/shared/ErrorBanner';
-import ConfirmDialog from '@/components/shared/ConfirmDialog';
-import { Textarea } from '@/components/ui/textarea';
+  Edit,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useTask } from "@/lib/hooks/useTasks";
+import { useProject } from "@/lib/hooks/useProjects";
+import { useComments } from "@/lib/hooks/useComments";
+import { useActiveUser } from "@/providers/ActiveUserContext";
+import {
+  formatDate,
+  getInitials,
+  isOverdue,
+  TASK_STATUSES,
+  TASK_PRIORITIES,
+} from "@/lib/utils";
+import TaskStatusBadge from "@/components/tasks/TaskStatusBadge";
+import TaskPriorityBadge from "@/components/tasks/TaskPriorityBadge";
+import CommentList from "@/components/comments/CommentList";
+import CommentForm from "@/components/comments/CommentForm";
+import LabelBadge from "@/components/labels/LabelBadge";
+import LabelSelector from "@/components/labels/LabelSelector";
+import { DetailSkeleton } from "@/components/shared/LoadingSkeleton";
+import ErrorBanner from "@/components/shared/ErrorBanner";
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function TaskDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const { activeUser } = useActiveUser();
-  
-  const { 
-    task, 
-    isLoading, 
-    isError, 
-    updateTask, 
-    updateStatus, 
-    assignUser, 
+
+  const {
+    task,
+    isLoading,
+    isError,
+    updateTask,
+    updateStatus,
+    assignUser,
     deleteTask,
     addLabel,
-    removeLabel
-  } = useTask(id);
+    removeLabel,
+  } = useTask(id, task?.project?.id);
 
   const { members } = useProject(task?.project?.id);
-  const { comments, createComment, updateComment, deleteComment } = useComments(id);
+  const { comments, createComment, updateComment, deleteComment } =
+    useComments(id);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditingDesc, setIsEditingDesc] = useState(false);
-  const [descValue, setDescValue] = useState('');
+  const [descValue, setDescValue] = useState("");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [titleValue, setTitleValue] = useState('');
+  const [titleValue, setTitleValue] = useState("");
 
   const onConfirmDelete = async () => {
     const projectId = task?.project?.id;
@@ -77,16 +82,22 @@ export default function TaskDetailPage() {
   };
 
   const handleUpdateDescription = () => {
-    updateTask.mutate({ ...task, description: descValue }, {
-      onSuccess: () => setIsEditingDesc(false)
-    });
+    updateTask.mutate(
+      { ...task, description: descValue },
+      {
+        onSuccess: () => setIsEditingDesc(false),
+      },
+    );
   };
 
   const handleUpdateTitle = () => {
     if (titleValue.trim() && titleValue !== task.title) {
-      updateTask.mutate({ ...task, title: titleValue }, {
-        onSuccess: () => setIsEditingTitle(false)
-      });
+      updateTask.mutate(
+        { ...task, title: titleValue },
+        {
+          onSuccess: () => setIsEditingTitle(false),
+        },
+      );
     } else {
       setIsEditingTitle(false);
     }
@@ -100,8 +111,8 @@ export default function TaskDetailPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <Link 
-        href={`/projects/${task.project?.id}`} 
+      <Link
+        href={`/projects/${task.project?.id}`}
         className="flex items-center text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors group mb-4"
       >
         <ArrowLeft className="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" />
@@ -123,7 +134,7 @@ export default function TaskDetailPage() {
                 />
               </div>
             ) : (
-              <h1 
+              <h1
                 className="text-4xl font-extrabold tracking-tight text-gray-900 cursor-pointer hover:bg-gray-100/50 rounded-md p-1 transition-colors"
                 onClick={() => {
                   setTitleValue(task.title);
@@ -141,12 +152,12 @@ export default function TaskDetailPage() {
                   Description
                 </h3>
                 {!isEditingDesc && (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-7 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                     onClick={() => {
-                      setDescValue(task.description || '');
+                      setDescValue(task.description || "");
                       setIsEditingDesc(true);
                     }}
                   >
@@ -155,7 +166,7 @@ export default function TaskDetailPage() {
                   </Button>
                 )}
               </div>
-              
+
               {isEditingDesc ? (
                 <div className="space-y-3">
                   <Textarea
@@ -166,12 +177,16 @@ export default function TaskDetailPage() {
                     autoFocus
                   />
                   <div className="flex items-center space-x-2">
-                    <Button size="sm" onClick={handleUpdateDescription} disabled={updateTask.isPending}>
+                    <Button
+                      size="sm"
+                      onClick={handleUpdateDescription}
+                      disabled={updateTask.isPending}
+                    >
                       Save Changes
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       onClick={() => setIsEditingDesc(false)}
                       disabled={updateTask.isPending}
                     >
@@ -181,7 +196,11 @@ export default function TaskDetailPage() {
                 </div>
               ) : (
                 <p className="text-gray-600 leading-relaxed bg-white p-4 rounded-xl border border-gray-100 shadow-sm whitespace-pre-wrap">
-                  {task.description || <span className="text-gray-400 italic">No description provided for this task.</span>}
+                  {task.description || (
+                    <span className="text-gray-400 italic">
+                      No description provided for this task.
+                    </span>
+                  )}
                 </p>
               )}
             </div>
@@ -191,18 +210,25 @@ export default function TaskDetailPage() {
 
           <div className="space-y-6">
             <h3 className="text-lg font-bold text-gray-900 flex items-center">
-              Discussion 
-              <Badge variant="secondary" className="ml-3 bg-gray-100 text-gray-600 font-bold px-2 rounded-full">
+              Discussion
+              <Badge
+                variant="secondary"
+                className="ml-3 bg-gray-100 text-gray-600 font-bold px-2 rounded-full"
+              >
                 {comments.length}
               </Badge>
             </h3>
-            <CommentList 
-              comments={comments} 
-              onUpdateComment={(id, content) => updateComment.mutate({ id, data: { content } })}
+            <CommentList
+              comments={comments}
+              onUpdateComment={(id, content) =>
+                updateComment.mutate({ id, data: { content } })
+              }
               onDeleteComment={(id) => deleteComment.mutate(id)}
             />
-            <CommentForm 
-              onSubmit={(content) => createComment.mutate({ content, authorId: activeUser?.id })}
+            <CommentForm
+              onSubmit={(content) =>
+                createComment.mutate({ content, authorId: activeUser?.id })
+              }
               loading={createComment.isPending}
             />
           </div>
@@ -218,14 +244,17 @@ export default function TaskDetailPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block">
                   Current Status
                 </label>
-                <Select value={task.status} onValueChange={(val) => updateStatus.mutate(val)}>
+                <Select
+                  value={task.status}
+                  onValueChange={(val) => updateStatus.mutate(val)}
+                >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
                     <SelectValue>
                       <TaskStatusBadge status={task.status} />
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {TASK_STATUSES.map(s => (
+                    {TASK_STATUSES.map((s) => (
                       <SelectItem key={s} value={s}>
                         <TaskStatusBadge status={s} />
                       </SelectItem>
@@ -239,14 +268,19 @@ export default function TaskDetailPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block">
                   Priority level
                 </label>
-                <Select value={task.priority} onValueChange={(val) => updateTask.mutate({ ...task, priority: val })}>
+                <Select
+                  value={task.priority}
+                  onValueChange={(val) =>
+                    updateTask.mutate({ ...task, priority: val })
+                  }
+                >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
                     <SelectValue>
                       <TaskPriorityBadge priority={task.priority} />
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {TASK_PRIORITIES.map(p => (
+                    {TASK_PRIORITIES.map((p) => (
                       <SelectItem key={p} value={p}>
                         <TaskPriorityBadge priority={p} />
                       </SelectItem>
@@ -260,8 +294,8 @@ export default function TaskDetailPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block font-semibold flex items-center">
                   Assignee
                 </label>
-                <Select 
-                  value={task.assignee?.id?.toString() || ""} 
+                <Select
+                  value={task.assignee?.id?.toString() || ""}
                   onValueChange={(val) => assignUser.mutate(parseInt(val))}
                 >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
@@ -273,17 +307,21 @@ export default function TaskDetailPage() {
                               {getInitials(task.assignee.name)}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-sm font-medium">{task.assignee.name}</span>
+                          <span className="text-sm font-medium">
+                            {task.assignee.name}
+                          </span>
                         </div>
                       )}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    {members.map(m => (
+                    {members.map((m) => (
                       <SelectItem key={m.id} value={m.id.toString()}>
                         <div className="flex items-center space-x-2">
                           <Avatar className="h-5 w-5">
-                            <AvatarFallback className="text-[8px]">{getInitials(m.name)}</AvatarFallback>
+                            <AvatarFallback className="text-[8px]">
+                              {getInitials(m.name)}
+                            </AvatarFallback>
                           </Avatar>
                           <span>{m.name}</span>
                         </div>
@@ -299,16 +337,22 @@ export default function TaskDetailPage() {
                   Categories & Tags
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {task.labels?.map(l => (
-                    <LabelBadge key={l.id} label={l} onRemove={() => removeLabel.mutate(l.id)} />
+                  {task.labels?.map((l) => (
+                    <LabelBadge
+                      key={l.id}
+                      label={l}
+                      onRemove={() => removeLabel.mutate(l.id)}
+                    />
                   ))}
                   {(!task.labels || task.labels.length === 0) && (
-                    <span className="text-xs text-slate-400 italic">No labels</span>
+                    <span className="text-xs text-slate-400 italic">
+                      No labels
+                    </span>
                   )}
                 </div>
-                <LabelSelector 
-                  selectedLabelIds={task.labels?.map(l => l.id)} 
-                  onSelect={(id) => addLabel.mutate(id)} 
+                <LabelSelector
+                  selectedLabelIds={task.labels?.map((l) => l.id)}
+                  onSelect={(id) => addLabel.mutate(id)}
                   onRemove={(id) => removeLabel.mutate(id)}
                 />
               </div>
@@ -318,11 +362,15 @@ export default function TaskDetailPage() {
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block font-semibold">
                   Schedule
                 </label>
-                <div className={`p-3 rounded-xl border flex items-center justify-between ${overdue ? 'bg-red-50 border-red-100 text-red-700' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                <div
+                  className={`p-3 rounded-xl border flex items-center justify-between ${overdue ? "bg-red-50 border-red-100 text-red-700" : "bg-gray-50 border-gray-100 text-gray-700"}`}
+                >
                   <div className="flex items-center space-x-2">
-                    <Clock className={`h-4 w-4 ${overdue ? 'text-red-500' : 'text-gray-400'}`} />
+                    <Clock
+                      className={`h-4 w-4 ${overdue ? "text-red-500" : "text-gray-400"}`}
+                    />
                     <span className="text-sm font-medium">
-                      {task.dueDate ? formatDate(task.dueDate) : 'No due date'}
+                      {task.dueDate ? formatDate(task.dueDate) : "No due date"}
                     </span>
                   </div>
                   {overdue && (
@@ -334,18 +382,20 @@ export default function TaskDetailPage() {
               </div>
 
               <div className="pt-4 space-y-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full h-11 border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
                   onClick={() => setIsDeleteOpen(true)}
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Delete Task
                 </Button>
-                
+
                 <div className="flex items-center justify-center space-x-1 text-[10px] text-gray-400">
                   <span className="uppercase tracking-widest">Created</span>
-                  <span className="font-bold">{formatDate(task.createdAt)}</span>
+                  <span className="font-bold">
+                    {formatDate(task.createdAt)}
+                  </span>
                 </div>
               </div>
             </CardContent>

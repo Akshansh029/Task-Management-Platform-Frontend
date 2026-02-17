@@ -48,13 +48,13 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
   };
 }
 
-export function useTask(id) {
+export function useTask(id, projectId) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const taskQuery = useQuery({
     queryKey: ["tasks", id],
-    queryFn: () => tasksApi.getTask(id),
+    queryFn: () => tasksApi.getTask(id, projectId),
     enabled: !!id,
   });
 
