@@ -19,6 +19,9 @@ export default function ProjectsPage() {
     isLoading,
     isError,
     error,
+    pageNo,
+    setPageNo,
+    pageSize,
     createProject,
     updateProject,
     deleteProject,
@@ -106,11 +109,46 @@ export default function ProjectsPage() {
       {isLoading ? (
         <CardGridSkeleton count={6} />
       ) : filteredProjects.length > 0 ? (
-        <ProjectGrid
-          projects={filteredProjects}
-          onEdit={handleEdit}
-          onDelete={handleDeleteClick}
-        />
+        <>
+          <ProjectGrid
+            projects={filteredProjects}
+            onEdit={handleEdit}
+            onDelete={handleDeleteClick}
+          />
+
+          <div className="flex items-center justify-between mt-8 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="text-sm text-gray-500">
+              Showing{" "}
+              <span className="font-medium">{projects.numberOfElements}</span>{" "}
+              of <span className="font-medium">{projects.totalElements}</span>{" "}
+              projects
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPageNo((prev) => Math.max(0, prev - 1))}
+                disabled={projects.first || pageNo === 0}
+              >
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1 px-4">
+                <span className="text-sm font-medium">Page {pageNo + 1}</span>
+                <span className="text-sm text-gray-500">
+                  of {projects.totalPages}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPageNo((prev) => prev + 1)}
+                disabled={projects.last}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       ) : (
         <EmptyState
           icon={FolderPlus}

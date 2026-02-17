@@ -1,8 +1,10 @@
-import apiClient from './client';
+import apiClient from "./client";
 
-// Get all users
-export const getUsers = async () => {
-  const response = await apiClient.get('/users');
+// Get all users with optional pagination
+export const getUsers = async (pageNo = 0, pageSize = 10) => {
+  const response = await apiClient.get("/users", {
+    params: { pageNo, pageSize },
+  });
   return response.data;
 };
 
@@ -14,39 +16,23 @@ export const getUser = async (id) => {
 
 // Create user
 export const createUser = async (userData) => {
-  const response = await apiClient.post('/users', userData, {
-    headers: {
-      'X-User-ID': '28'
-    }
-  });
+  const response = await apiClient.post("/users", userData);
   return response.data;
 };
 
 // Update user
 export const updateUser = async (id, userData) => {
-  const response = await apiClient.put(`/users/${id}`, userData, {
-    headers: {
-      'X-User-ID': '28'
-    }
-  });
+  const response = await apiClient.put(`/users/${id}`, userData);
   return response.data;
 };
 
 // Update user role
 export const updateUserRole = async (id, roleData) => {
-  const response = await apiClient.patch(`/users/${id}`, roleData, {
-    headers: {
-      'X-User-ID': '28'
-    }
-  });
+  const response = await apiClient.patch(`/users/${id}`, roleData);
   return response.data;
 };
 
 // Delete user
 export const deleteUser = async (id) => {
-  await apiClient.delete(`/users/${id}`, {
-    headers: {
-      'X-User-ID': '28'
-    }
-  });
+  await apiClient.delete(`/users/${id}`);
 };

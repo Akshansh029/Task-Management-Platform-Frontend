@@ -49,23 +49,22 @@ const StatCard = ({ title, value, icon: Icon, colorClass, isLoading }) => (
 
 export default function DashboardPage() {
   const { activeUser } = useActiveUser();
-  const { projects, isLoading: projectsLoading } = useProjects();
-  const { users, isLoading: usersLoading } = useUsers();
-  const { tasks, isLoading: tasksLoading } = useTasks();
-
+  const { projects, isLoading: projectsLoading } = useProjects(0, 50);
+  const { users, isLoading: usersLoading } = useUsers(0, 50);
+  const { tasks, isLoading: tasksLoading } = useTasks(undefined, 0, 50);
   const isLoading = projectsLoading || usersLoading || tasksLoading;
 
   // Stats calculation
-  const totalProjects = projects.length;
-  const totalTasks = tasks.length;
-  const inProgressTasks = tasks.filter(
+  const totalProjects = projects.totalElements;
+  const totalTasks = tasks.totalElements;
+  const inProgressTasks = tasks.content.filter(
     (t) => t.status === "IN_PROGRESS",
   ).length;
-  const totalUsers = users.length;
+  const totalUsers = users.totalElements;
 
   // Recent data
-  const recentProjects = projects.slice(0, 4);
-  const myTasks = tasks
+  const recentProjects = projects.content.slice(0, 4);
+  const myTasks = tasks.content
     .filter((t) => t.assignee?.id === activeUser?.id)
     .slice(0, 5);
 

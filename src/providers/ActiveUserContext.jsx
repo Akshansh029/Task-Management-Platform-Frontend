@@ -1,37 +1,59 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
-import { getUsers } from '@/lib/api/users';
+import { createContext, useContext, useState, useEffect } from "react";
+import { getUsers } from "@/lib/api/users";
 
 const ActiveUserContext = createContext(undefined);
 
 export function ActiveUserProvider({ children }) {
   const [activeUser, setActiveUser] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState({ content: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch all users on mount
-    const fetchUsers = async () => {
+    const initUser = async () => {
       try {
-        const fetchedUsers = await getUsers();
+        const fetchedUsers = await getUsers(0, 50); // Fetch a larger batch for selection
         setUsers(fetchedUsers);
-        // Set first user as default active user
-        if (fetchedUsers.length > 0) {
-          setActiveUser(fetchedUsers[0]);
+
+        const storedId = localStorage.getItem("activeUserId");
+        if (storedId) {
+          const user = fetchedUsers.content?.find(
+            (u) => u.id.toString() === storedId,
+          );
+          if (user) {
+            setActiveUser(user);
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch users:', error);
+        console.error("Failed to fetch users:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    initUser();
   }, []);
 
+  const handleSetActiveUser = (user) => {
+    if (user) {
+      localStorage.setItem("activeUserId", user.id.toString());
+      setActiveUser(user);
+    } else {
+      localStorage.removeItem("activeUserId");
+      setActiveUser(null);
+    }
+  };
+
   return (
-    <ActiveUserContext.Provider value={{ activeUser, setActiveUser, users, loading }}>
+    <ActiveUserContext.Provider
+      value={{
+        activeUser,
+        setActiveUser: handleSetActiveUser,
+        users,
+        loading,
+      }}
+    >
       {children}
     </ActiveUserContext.Provider>
   );
@@ -40,7 +62,7 @@ export function ActiveUserProvider({ children }) {
 export function useActiveUser() {
   const context = useContext(ActiveUserContext);
   if (context === undefined) {
-    throw new Error('useActiveUser must be used within an ActiveUserProvider');
+    throw new Error("useActiveUser must be used within an ActiveUserProvider");
   }
   return context;
 }

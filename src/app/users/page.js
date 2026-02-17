@@ -20,6 +20,9 @@ export default function UsersPage() {
     isLoading,
     isError,
     error,
+    pageNo,
+    setPageNo,
+    pageSize,
     createUser,
     updateUser,
     deleteUser,
@@ -106,11 +109,45 @@ export default function UsersPage() {
       {isLoading ? (
         <TableSkeleton columns={5} rows={6} />
       ) : filteredUsers.length > 0 ? (
-        <UserTable
-          users={filteredUsers}
-          onEdit={handleEdit}
-          onDelete={handleDeleteClick}
-        />
+        <>
+          <UserTable
+            users={filteredUsers}
+            onEdit={handleEdit}
+            onDelete={handleDeleteClick}
+          />
+
+          <div className="flex items-center justify-between mt-6 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+            <div className="text-sm text-gray-500">
+              Showing{" "}
+              <span className="font-medium">{users.numberOfElements}</span> of{" "}
+              <span className="font-medium">{users.totalElements}</span> users
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPageNo((prev) => Math.max(0, prev - 1))}
+                disabled={users.first || pageNo === 0}
+              >
+                Previous
+              </Button>
+              <div className="flex items-center space-x-1 px-4">
+                <span className="text-sm font-medium">Page {pageNo + 1}</span>
+                <span className="text-sm text-gray-500">
+                  of {users.totalPages}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPageNo((prev) => prev + 1)}
+                disabled={users.last}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </>
       ) : (
         <EmptyState
           icon={UsersIcon}

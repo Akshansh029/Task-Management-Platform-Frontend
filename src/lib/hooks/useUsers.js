@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as usersApi from "@/lib/api/users";
 import { useToast } from "@/lib/hooks/use-toast";
 
-export function useUsers() {
+export function useUsers(initialPage = 0, initialSize = 10) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [pageNo, setPageNo] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialSize);
 
   const usersQuery = useQuery({
-    queryKey: ["users"],
-    queryFn: usersApi.getUsers,
+    queryKey: ["users", pageNo, pageSize],
+    queryFn: () => usersApi.getUsers(pageNo, pageSize),
   });
 
   const createUserMutation = useMutation({
@@ -90,6 +93,10 @@ export function useUsers() {
     isLoading: usersQuery.isLoading,
     isError: usersQuery.isError,
     error: usersQuery.error,
+    pageNo,
+    pageSize,
+    setPageNo,
+    setPageSize,
     createUser: createUserMutation,
     updateUser: updateUserMutation,
     deleteUser: deleteUserMutation,

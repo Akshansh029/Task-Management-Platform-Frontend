@@ -1,15 +1,19 @@
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as tasksApi from "@/lib/api/tasks";
 import { useToast } from "@/lib/hooks/use-toast";
 
-export function useTasks(projectId) {
+export function useTasks(projectId, initialPage = 0, initialSize = 10) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [pageNo, setPageNo] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialSize);
 
   const tasksQuery = useQuery({
-    queryKey: projectId ? ["projects", projectId, "tasks"] : ["tasks"],
-    queryFn: () => (projectId ? tasksApi.getTasks() : tasksApi.getTasks()), // Fallback if no specific filter
-    // Note: Technically the backend has project specific tasks, which we use in useProject
+    queryKey: projectId
+      ? ["projects", projectId, "tasks", pageNo, pageSize]
+      : ["tasks", pageNo, pageSize],
+    queryFn: () => tasksApi.getTasks(projectId, pageNo, pageSize),
   });
 
   const createTaskMutation = useMutation({
@@ -34,8 +38,12 @@ export function useTasks(projectId) {
   });
 
   return {
-    tasks: tasksQuery.data || [],
+    tasks: tasksQuery.data || { content: [] },
     isLoading: tasksQuery.isLoading,
+    pageNo,
+    setPageNo,
+    pageSize,
+    setPageSize,
     createTask: createTaskMutation,
   };
 }

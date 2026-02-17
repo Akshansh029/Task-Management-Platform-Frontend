@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as projectsApi from "@/lib/api/projects";
 import { useToast } from "@/lib/hooks/use-toast";
 
-export function useProjects() {
+export function useProjects(initialPage = 0, initialSize = 10) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [pageNo, setPageNo] = useState(initialPage);
+  const [pageSize, setPageSize] = useState(initialSize);
 
   const projectsQuery = useQuery({
-    queryKey: ["projects"],
-    queryFn: projectsApi.getProjects,
+    queryKey: ["projects", pageNo, pageSize],
+    queryFn: () => projectsApi.getProjects(pageNo, pageSize),
   });
 
   const createProjectMutation = useMutation({
@@ -71,6 +74,9 @@ export function useProjects() {
     isLoading: projectsQuery.isLoading,
     isError: projectsQuery.isError,
     error: projectsQuery.error,
+    pageNo,
+    setPageNo,
+    pageSize,
     createProject: createProjectMutation,
     updateProject: updateProjectMutation,
     deleteProject: deleteProjectMutation,
