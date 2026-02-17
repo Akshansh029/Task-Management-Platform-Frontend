@@ -2,31 +2,53 @@ import apiClient from './client';
 
 // Get all tasks
 export const getTasks = async () => {
-  const response = (await apiClient.get('/tasks'));
+  const response = (await apiClient.get('/tasks', {
+    headers: {
+      'X-User-ID': '28', 
+      'X-Project-ID': '12', 
+    }
+  }));
   return response.data;
 };
 
 // Get single task
 export const getTask = async (id) => {
-  const response = await apiClient.get(`/tasks/${id}`);
+  const response = await apiClient.get(`/tasks/${id}`, {
+    headers: {
+      'X-User-ID': '28', 
+      'X-Project-ID': '12', 
+    }
+  });
   return response.data;
 };
 
 // Create task in project
 export const createTask = async (projectId, taskData) => {
-  const response = await apiClient.post(`/projects/${projectId}/tasks`, taskData);
+  const response = await apiClient.post(`/projects/${projectId}/tasks`, taskData, {
+    headers: {
+      'X-User-ID': '28',
+    }
+  });
   return response.data;
 };
 
 // Update task
 export const updateTask = async (id, taskData) => {
-  const response = await apiClient.put(`/tasks/${id}`, taskData);
+  const response = await apiClient.put(`/tasks/${id}`, taskData, {
+    headers: {
+      'X-User-ID': '28',
+    }
+  });
   return response.data;
 };
 
 // Update task status
 export const updateTaskStatus = async (id, status) => {
-  const response = await apiClient.patch(`/tasks/${id}/status`, { status });
+  const response = await apiClient.patch(`/tasks/${id}/status`, { status }, {
+    headers: {
+      'X-User-ID': '28',
+    }
+  });
   return response.data;
 };
 
@@ -38,7 +60,12 @@ export const assignTask = async (taskId, userId) => {
 
 // Delete task
 export const deleteTask = async (id) => {
-  await apiClient.delete(`/tasks/${id}`);
+  await apiClient.delete(`/tasks/${id}`, {
+    headers: {
+      'X-User-ID': '28', 
+      'X-Project-ID': '12', 
+    }
+  });
 };
 
 // Add label to task

@@ -48,6 +48,25 @@ export function useUsers() {
     },
   });
 
+  const updateUserRoleMutation = useMutation({
+    mutationFn: ({ id, data }) => usersApi.updateUserRole(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['users', data.id] });
+      toast({
+        title: 'Success',
+        description: 'User updated successfully',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error',
+        description: error.userMessage || 'Failed to update user',
+        variant: 'destructive',
+      });
+    },
+  });
+
   const deleteUserMutation = useMutation({
     mutationFn: usersApi.deleteUser,
     onSuccess: () => {

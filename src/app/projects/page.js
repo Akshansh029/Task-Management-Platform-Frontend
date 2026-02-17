@@ -23,13 +23,15 @@ export default function ProjectsPage() {
     updateProject, 
     deleteProject 
   } = useProjects();
+
+  console.log(projects);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
 
-  const filteredProjects = projects.filter(project => 
+  const filteredProjects = projects.content.filter(project => 
     project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (project.description && project.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );

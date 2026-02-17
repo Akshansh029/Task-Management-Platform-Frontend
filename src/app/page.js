@@ -49,9 +49,9 @@ export default function DashboardPage() {
   const { users, isLoading: usersLoading } = useUsers();
   const { tasks, isLoading: tasksLoading } = useTasks();
 
-  console.log("Projects: ", projects);
-  console.log("Users: ", users);
-  console.log("Tasks: ", tasks);
+  // console.log("Projects: ", projects);
+  // console.log("Users: ", users);
+  // console.log("Tasks: ", tasks);
 
   const isLoading = projectsLoading || usersLoading || tasksLoading;
 
