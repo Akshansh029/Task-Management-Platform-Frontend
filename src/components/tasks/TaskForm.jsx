@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/utils";
-import { useProject } from "@/lib/hooks/useProjects";
 
 const TaskForm = ({
   open,
@@ -32,15 +31,12 @@ const TaskForm = ({
   loading,
   initialStatus,
 }) => {
-  const { members } = useProject(projectId);
-
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     status: "TODO",
     priority: "MEDIUM",
     dueDate: "",
-    assigneeId: "none",
   });
   const [errors, setErrors] = useState({});
 
@@ -52,7 +48,6 @@ const TaskForm = ({
         status: task.status || "TODO",
         priority: task.priority || "MEDIUM",
         dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
-        assigneeId: task.assignee?.id?.toString() || "none",
       });
     } else {
       setFormData({
@@ -61,7 +56,6 @@ const TaskForm = ({
         status: initialStatus || "TODO",
         priority: "MEDIUM",
         dueDate: "",
-        assigneeId: "none",
       });
     }
     setErrors({});
@@ -87,11 +81,10 @@ const TaskForm = ({
     if (validate()) {
       const submissionData = {
         ...formData,
-        assigneeId:
-          formData.assigneeId && formData.assigneeId !== "none"
-            ? parseInt(formData.assigneeId)
-            : null,
+        dueDate: new Date(formData.dueDate),
+        projectId: parseInt(projectId),
       };
+      console.log(submissionData);
       onSubmit(submissionData);
     }
   };
@@ -176,27 +169,6 @@ const TaskForm = ({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="task-assignee">Assignee</Label>
-              <Select
-                value={formData.assigneeId}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, assigneeId: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Unassigned" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Unassigned</SelectItem>
-                  {members.content.map((user) => (
-                    <SelectItem key={user.id} value={user.id.toString()}>
-                      {user.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
             <div className="space-y-2">
               <Label htmlFor="task-due">Due Date</Label>
               <Input

@@ -31,7 +31,7 @@ export default function ProjectDetailPage() {
     deleteProject,
   } = useProject(id);
 
-  const { createTask, deleteTask } = useTasks();
+  const { createTask, updateTask, assignTask, deleteTask } = useTasks(id);
 
   const [activeTab, setActiveTab] = useState("board");
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
@@ -59,7 +59,11 @@ export default function ProjectDetailPage() {
 
   const onTaskSubmit = async (data) => {
     if (selectedTask) {
-      await updateProject.mutateAsync({ id, data });
+      await updateTask.mutateAsync({
+        taskId: selectedTask.id,
+        projectId: id,
+        data,
+      });
     } else {
       await createTask.mutateAsync({ projectId: id, data });
     }
@@ -67,7 +71,10 @@ export default function ProjectDetailPage() {
   };
 
   const onConfirmTaskDelete = async () => {
-    await deleteTask.mutateAsync(selectedTask.id);
+    await deleteTask.mutateAsync({
+      taskId: selectedTask.id,
+      projectId: Number(id),
+    });
     setIsTaskDeleteOpen(false);
   };
 
@@ -118,6 +125,10 @@ export default function ProjectDetailPage() {
             onDeleteTask={handleDeleteTaskClick}
             onAddTask={handleAddTask}
             projectId={project.id}
+            members={members}
+            onAssignTask={(taskId, userId) =>
+              assignTask.mutate({ taskId, userId, projectId: id })
+            }
           />
         </TabsContent>
 

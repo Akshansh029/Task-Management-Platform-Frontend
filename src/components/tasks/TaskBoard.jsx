@@ -13,6 +13,8 @@ const TaskBoard = ({
   onDeleteTask,
   onAddTask,
   projectId,
+  members,
+  onAssignTask,
 }) => {
   // Group tasks by status
   const columns = TASK_STATUSES.reduce((acc, status) => {
@@ -69,6 +71,8 @@ const TaskBoard = ({
                 onEdit={onEditTask}
                 onDelete={onDeleteTask}
                 projectId={projectId}
+                members={members}
+                onAssign={onAssignTask}
               />
             ))}
 

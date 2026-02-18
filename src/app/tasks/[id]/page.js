@@ -66,8 +66,6 @@ export default function TaskDetailPage() {
     removeLabel,
   } = useTask(id, projectIdFromUrl);
 
-  console.log(task);
-
   const { members } = useProject(projectIdFromUrl);
   const { comments, createComment, updateComment, deleteComment } =
     useComments(id);
@@ -79,9 +77,10 @@ export default function TaskDetailPage() {
   const [titleValue, setTitleValue] = useState("");
 
   const onConfirmDelete = async () => {
+    const projectId = task.projectId;
     await deleteTask.mutateAsync();
     setIsDeleteOpen(false);
-    router.push(`/projects/${task.projectId}`);
+    router.push(`/projects/${projectId}`);
   };
 
   const handleUpdateDescription = () => {
@@ -277,7 +276,7 @@ export default function TaskDetailPage() {
                 <Select
                   value={task.priority}
                   onValueChange={(val) =>
-                    updateTask.mutate({ ...task, priority: val.id })
+                    updateTask.mutate({ ...task, priority: val })
                   }
                 >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">

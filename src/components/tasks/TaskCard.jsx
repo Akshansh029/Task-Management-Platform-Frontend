@@ -3,7 +3,14 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Calendar, MoreVertical, Edit, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  MoreVertical,
+  Edit,
+  Trash2,
+  UserPlus,
+  User,
+} from "lucide-react";
 import { formatDate, getInitials, isOverdue } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import TaskPriorityBadge from "./TaskPriorityBadge";
@@ -16,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-const TaskCard = ({ task, onEdit, onDelete, projectId }) => {
+const TaskCard = ({ task, onEdit, onDelete, projectId, members, onAssign }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -77,20 +84,60 @@ const TaskCard = ({ task, onEdit, onDelete, projectId }) => {
       )}
 
       <div className="pt-2 flex items-center justify-between">
-        {task.assignee ? (
-          <div className="flex items-center space-x-2">
-            <Avatar className="h-6 w-6">
-              <AvatarFallback className="text-[8px] bg-blue-50 text-blue-700">
-                {getInitials(task.assignee.name)}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-[10px] font-medium text-gray-600 truncate max-w-[80px]">
-              {task.assignee.name}
-            </span>
-          </div>
-        ) : (
-          <div className="text-[10px] text-gray-400 italic">Unassigned</div>
-        )}
+        <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              {task.assignee ? (
+                <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors group/assignee">
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback className="text-[8px] bg-blue-50 text-blue-700">
+                      {getInitials(task.assignee.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-[10px] font-medium text-gray-600 truncate max-w-[80px]">
+                    {task.assignee.name}
+                  </span>
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-[10px] text-gray-400 italic hover:text-blue-600 group/unassigned"
+                >
+                  <UserPlus className="h-3 w-3 mr-1 opacity-0 group-hover/unassigned:opacity-100 transition-opacity" />
+                  Unassigned
+                </Button>
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 border-b mb-1">
+                Assign to Member
+              </div>
+              {members?.content?.map((member) => (
+                <DropdownMenuItem
+                  key={member.id}
+                  onClick={() => onAssign(task.id, member.id)}
+                  className="text-xs"
+                >
+                  <Avatar className="h-5 w-5 mr-2">
+                    <AvatarFallback className="text-[7px]">
+                      {getInitials(member.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  {member.name}
+                  {task.assignee?.id === member.id && (
+                    <div className="ml-auto w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+              {(!members?.content || members.content.length === 0) && (
+                <div className="px-2 py-4 text-[10px] text-center text-gray-400 italic">
+                  No members available
+                </div>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         {task.dueDate && (
           <div

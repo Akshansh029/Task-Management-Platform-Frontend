@@ -41,7 +41,7 @@ const MemberList = ({
 
   // Check if active user can manage members
   const isAdmin = activeUser?.role === "ADMIN";
-  const isOwner = activeUser?.id === project?.owner?.id;
+  const isOwner = activeUser?.id === project?.ownerId;
   const canManage = isAdmin || isOwner;
 
   // Filter out users who are already members

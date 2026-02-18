@@ -23,10 +23,11 @@ export const getTask = async (id, projectId) => {
 
 // Create task in project
 export const createTask = async (projectId, taskData) => {
-  const response = await apiClient.post(
-    `/projects/${projectId}/tasks`,
-    taskData,
-  );
+  const response = await apiClient.post("/tasks", taskData, {
+    headers: {
+      "X-Project-ID": projectId,
+    },
+  });
   return response.data;
 };
 
@@ -41,14 +42,30 @@ export const updateTask = async (id, taskData, projectId) => {
 };
 
 // Update task status
-export const updateTaskStatus = async (id, status) => {
-  const response = await apiClient.patch(`/tasks/${id}/status`, { status });
+export const updateTaskStatus = async (id, status, projectId) => {
+  const response = await apiClient.patch(
+    `/tasks/${id}/status`,
+    { status },
+    {
+      headers: {
+        "X-Project-ID": projectId,
+      },
+    },
+  );
   return response.data;
 };
 
 // Assign task to user
-export const assignTask = async (taskId, userId) => {
-  const response = await apiClient.patch(`/tasks/${taskId}/assign/${userId}`);
+export const assignTask = async (taskId, userId, projectId) => {
+  const response = await apiClient.patch(
+    `/tasks/${taskId}/assign/${userId}`,
+    {},
+    {
+      headers: {
+        "X-Project-ID": projectId,
+      },
+    },
+  );
   return response.data;
 };
 
@@ -62,11 +79,19 @@ export const deleteTask = async (id, projectId) => {
 };
 
 // Add label to task
-export const addTaskLabel = async (taskId, labelId) => {
-  await apiClient.post(`/tasks/${taskId}/labels/${labelId}`);
+export const addTaskLabel = async (taskId, labelId, projectId) => {
+  await apiClient.post(`/tasks/${taskId}/labels/${labelId}`, null, {
+    headers: {
+      "X-Project-ID": projectId,
+    },
+  });
 };
 
 // Remove label from task
-export const removeTaskLabel = async (taskId, labelId) => {
-  await apiClient.delete(`/tasks/${taskId}/labels/${labelId}`);
+export const removeTaskLabel = async (taskId, labelId, projectId) => {
+  await apiClient.delete(`/tasks/${taskId}/labels/${labelId}`, {
+    headers: {
+      "X-Project-ID": projectId,
+    },
+  });
 };
