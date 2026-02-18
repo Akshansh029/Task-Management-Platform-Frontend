@@ -37,6 +37,25 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
     },
   });
 
+  const deleteTaskMutation = useMutation({
+    mutationFn: (taskId) => tasksApi.deleteTask(taskId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast({
+        title: "Success",
+        description: "Task deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete task",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     tasks: tasksQuery.data || { content: [] },
     isLoading: tasksQuery.isLoading,
@@ -45,6 +64,7 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
     pageSize,
     setPageSize,
     createTask: createTaskMutation,
+    deleteTask: deleteTaskMutation,
   };
 }
 

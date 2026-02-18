@@ -59,9 +59,7 @@ export default function ProjectDetailPage() {
 
   const onTaskSubmit = async (data) => {
     if (selectedTask) {
-      // Need a useTask update here or handle in useTasks
-      // For simplicity, we'll implement updateTask in useTasks
-      await updateProject.mutateAsync({ id, data: {} }); // Mock trigger refresh
+      await updateProject.mutateAsync({ id, data });
     } else {
       await createTask.mutateAsync({ projectId: id, data });
     }
@@ -152,7 +150,7 @@ export default function ProjectDetailPage() {
         onOpenChange={setIsProjectFormOpen}
         project={project}
         onSubmit={(data) => updateProject.mutate({ id, data })}
-        // loading={updateProject.isPending}
+        loading={updateProject?.isPending || updateProject?.isLoading}
       />
 
       <ConfirmDialog
@@ -161,7 +159,7 @@ export default function ProjectDetailPage() {
         title="Delete Project"
         description="Are you sure you want to delete this project? This action cannot be undone."
         onConfirm={onConfirmProjectDelete}
-        // loading={deleteProject.isPending}
+        loading={deleteProject?.isPending}
       />
 
       <ConfirmDialog
@@ -170,7 +168,7 @@ export default function ProjectDetailPage() {
         title="Delete Task"
         description="Are you sure you want to delete this task?"
         onConfirm={onConfirmTaskDelete}
-        // loading={deleteTask.isPending}
+        loading={deleteTask?.isPending}
       />
     </div>
   );

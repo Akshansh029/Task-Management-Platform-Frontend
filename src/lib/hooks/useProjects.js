@@ -143,6 +143,43 @@ export function useProject(id) {
     },
   });
 
+  const updateProjectMutation = useMutation({
+    mutationFn: ({ id, data }) => projectsApi.updateProject(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects", id] });
+      toast({
+        title: "Success",
+        description: "Project updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update project",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteProjectMutation = useMutation({
+    mutationFn: (id) => projectsApi.deleteProject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast({
+        title: "Success",
+        description: "Project deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete project",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     project: projectQuery.data,
     members: membersQuery.data || { content: [] },
@@ -153,5 +190,7 @@ export function useProject(id) {
     error: projectQuery.error,
     addMember: addMemberMutation,
     removeMember: removeMemberMutation,
+    updateProject: updateProjectMutation,
+    deleteProject: deleteProjectMutation,
   };
 }

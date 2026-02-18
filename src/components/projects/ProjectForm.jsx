@@ -30,7 +30,6 @@ import { cn } from "@/lib/utils";
 import { useUsers } from "@/lib/hooks/useUsers";
 
 const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
-  // const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
   const { users } = useUsers(0, 100);
   const [ownerPopoverOpen, setOwnerPopoverOpen] = useState(false);
 

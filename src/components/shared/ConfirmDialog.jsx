@@ -15,6 +15,7 @@ const ConfirmDialog = ({
   title,
   description,
   onConfirm,
+  loading,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

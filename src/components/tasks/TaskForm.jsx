@@ -40,7 +40,7 @@ const TaskForm = ({
     status: "TODO",
     priority: "MEDIUM",
     dueDate: "",
-    assigneeId: "",
+    assigneeId: "none",
   });
   const [errors, setErrors] = useState({});
 
@@ -52,7 +52,7 @@ const TaskForm = ({
         status: task.status || "TODO",
         priority: task.priority || "MEDIUM",
         dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
-        assigneeId: task.assignee?.id?.toString() || "",
+        assigneeId: task.assignee?.id?.toString() || "none",
       });
     } else {
       setFormData({
@@ -61,7 +61,7 @@ const TaskForm = ({
         status: initialStatus || "TODO",
         priority: "MEDIUM",
         dueDate: "",
-        assigneeId: "",
+        assigneeId: "none",
       });
     }
     setErrors({});
@@ -87,7 +87,10 @@ const TaskForm = ({
     if (validate()) {
       const submissionData = {
         ...formData,
-        assigneeId: formData.assigneeId ? parseInt(formData.assigneeId) : null,
+        assigneeId:
+          formData.assigneeId && formData.assigneeId !== "none"
+            ? parseInt(formData.assigneeId)
+            : null,
       };
       onSubmit(submissionData);
     }
@@ -185,7 +188,7 @@ const TaskForm = ({
                   <SelectValue placeholder="Unassigned" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Unassigned</SelectItem>
+                  <SelectItem value="none">Unassigned</SelectItem>
                   {members.content.map((user) => (
                     <SelectItem key={user.id} value={user.id.toString()}>
                       {user.name}
