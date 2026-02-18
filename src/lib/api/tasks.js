@@ -23,7 +23,7 @@ export const getTask = async (id, projectId) => {
 
 // Create task in project
 export const createTask = async (projectId, taskData) => {
-  const response = await apiClient.post("/tasks", taskData, {
+  const response = await apiClient.post("/projects/tasks", taskData, {
     headers: {
       "X-Project-ID": projectId,
     },
