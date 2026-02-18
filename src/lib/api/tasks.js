@@ -31,8 +31,12 @@ export const createTask = async (projectId, taskData) => {
 };
 
 // Update task
-export const updateTask = async (id, taskData) => {
-  const response = await apiClient.put(`/tasks/${id}`, taskData);
+export const updateTask = async (id, taskData, projectId) => {
+  const response = await apiClient.put(`/tasks/${id}`, taskData, {
+    headers: {
+      "X-Project-ID": projectId,
+    },
+  });
   return response.data;
 };
 

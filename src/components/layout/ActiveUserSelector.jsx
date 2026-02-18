@@ -42,30 +42,33 @@ const ActiveUserSelector = () => {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>Select Active User</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {(users.content || []).map((user) => (
-          <DropdownMenuItem
-            key={user.id}
-            onClick={() => setActiveUser(user)}
-            className="flex items-center justify-between cursor-pointer"
-          >
-            <div className="flex items-center space-x-3">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback className="text-[10px] bg-blue-50 text-blue-600">
-                  {getInitials(user.name)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">{user.name}</span>
-                <span className="text-[10px] text-gray-500 uppercase">
-                  {user.role}
-                </span>
+
+        <div className="overflow-y-auto">
+          {(users.content || []).map((user) => (
+            <DropdownMenuItem
+              key={user.id}
+              onClick={() => setActiveUser(user)}
+              className="flex items-center justify-between cursor-pointer"
+            >
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-6 w-6">
+                  <AvatarFallback className="text-[10px] bg-blue-50 text-blue-600">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">{user.name}</span>
+                  <span className="text-[10px] text-gray-500 uppercase">
+                    {user.role}
+                  </span>
+                </div>
               </div>
-            </div>
-            {activeUser.id === user.id && (
-              <Check className="h-4 w-4 text-blue-600" />
-            )}
-          </DropdownMenuItem>
-        ))}
+              {activeUser.id === user.id && (
+                <Check className="h-4 w-4 text-blue-600" />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => setActiveUser(null)}

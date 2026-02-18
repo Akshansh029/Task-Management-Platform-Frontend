@@ -59,11 +59,11 @@ export function useTask(id, projectId) {
   });
 
   const updateTaskMutation = useMutation({
-    mutationFn: (data) => tasksApi.updateTask(id, data),
+    mutationFn: (data) => tasksApi.updateTask(id, data, projectId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       queryClient.invalidateQueries({
-        queryKey: ["projects", data.project?.id, "tasks"],
+        queryKey: ["projects", projectId, "tasks"],
       });
       toast({
         title: "Success",
@@ -84,7 +84,7 @@ export function useTask(id, projectId) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       queryClient.invalidateQueries({
-        queryKey: ["projects", data.project?.id, "tasks"],
+        queryKey: ["projects", "tasks"],
       });
       toast({
         title: "Success",

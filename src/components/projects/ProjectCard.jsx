@@ -46,9 +46,6 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
             <h3 className="font-semibold text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
               {project.title}
             </h3>
-            <p className="text-sm text-gray-500 line-clamp-2 min-h-8">
-              {project.description || "No description provided."}
-            </p>
           </div>
           <div onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
@@ -78,7 +75,7 @@ const ProjectCard = ({ project, onEdit, onDelete }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-5 pt-2 pb-4">
+      <CardContent className="p-5 pt-2 pb-4 space-y-6">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-xs text-gray-400 font-normal">Owner</span>
           <div className="flex items-center justify-center space-x-2 text-gray-600">

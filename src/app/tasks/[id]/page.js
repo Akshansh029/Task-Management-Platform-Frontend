@@ -66,6 +66,8 @@ export default function TaskDetailPage() {
     removeLabel,
   } = useTask(id, projectIdFromUrl);
 
+  console.log(task);
+
   const { members } = useProject(projectIdFromUrl);
   const { comments, createComment, updateComment, deleteComment } =
     useComments(id);
@@ -77,10 +79,9 @@ export default function TaskDetailPage() {
   const [titleValue, setTitleValue] = useState("");
 
   const onConfirmDelete = async () => {
-    const projectId = task?.project?.id;
     await deleteTask.mutateAsync();
     setIsDeleteOpen(false);
-    router.push(`/projects/${projectId}`);
+    router.push(`/projects/${task.projectId}`);
   };
 
   const handleUpdateDescription = () => {
@@ -117,11 +118,11 @@ export default function TaskDetailPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <Link
-        href={`/projects/${task.project?.id}`}
+        href={`/projects/${task.projectId}`}
         className="flex items-center text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors group mb-4"
       >
         <ArrowLeft className="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" />
-        Back to {task.project?.title}
+        Back to {task.projectTitle}
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -276,7 +277,7 @@ export default function TaskDetailPage() {
                 <Select
                   value={task.priority}
                   onValueChange={(val) =>
-                    updateTask.mutate({ ...task, priority: val })
+                    updateTask.mutate({ ...task, priority: val.id })
                   }
                 >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
@@ -340,7 +341,7 @@ export default function TaskDetailPage() {
 
               {/* Labels */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block font-semibold">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block">
                   Categories & Tags
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -366,7 +367,7 @@ export default function TaskDetailPage() {
 
               {/* Due Date */}
               <div className="space-y-3">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block font-semibold">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block">
                   Schedule
                 </label>
                 <div
