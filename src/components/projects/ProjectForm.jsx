@@ -175,6 +175,10 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
                         <CommandItem
                           key={user.id}
                           value={`${user.name} ${user.email}`}
+                          onPointerDown={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
                           onSelect={() => {
                             setFormData({
                               ...formData,

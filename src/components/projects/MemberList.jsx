@@ -32,7 +32,7 @@ import {
 const MemberList = ({
   project,
   members,
-  onAddMember,
+  onAddMultipleMembers,
   onRemoveMember,
   loading,
 }) => {
@@ -73,8 +73,13 @@ const MemberList = ({
                     {nonMembers.map((user) => (
                       <CommandItem
                         key={user.id}
+                        value={`${user.name} ${user.email}`}
+                        onPointerDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
                         onSelect={() => {
-                          onAddMember(user.id);
+                          onAddMultipleMembers([user.id]);
                           setOpen(false);
                         }}
                         className="flex items-center space-x-2 cursor-pointer"

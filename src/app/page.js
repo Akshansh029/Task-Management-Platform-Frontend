@@ -52,7 +52,7 @@ export default function DashboardPage() {
   const { projects, isLoading: projectsLoading } = useProjects(0, 50);
   const { users, isLoading: usersLoading } = useUsers(0, 50);
 
-  const { tasks, isLoading: tasksLoading } = useTasks(activeUser?.id, 0, 50);
+  const { tasks, isLoading: tasksLoading } = useTasks(undefined, 0, 50);
   const isLoading = projectsLoading || usersLoading || tasksLoading;
 
   // Stats calculation
@@ -62,8 +62,6 @@ export default function DashboardPage() {
     (t) => t.status === "IN_PROGRESS",
   ).length;
   const totalUsers = users.totalElements;
-
-  console.log(tasks.content);
 
   // Recent data
   const recentProjects = projects.content.slice(0, 4);

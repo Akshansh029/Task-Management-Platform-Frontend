@@ -26,6 +26,7 @@ export default function ProjectDetailPage() {
     isError,
     error,
     addMember,
+    addMultipleMembers,
     removeMember,
     updateProject,
     deleteProject,
@@ -139,9 +140,13 @@ export default function ProjectDetailPage() {
           <MemberList
             project={project}
             members={members}
-            onAddMember={(userId) => addMember.mutate({ userId })}
+            onAddMultipleMembers={(data) => addMultipleMembers.mutate({ data })}
             onRemoveMember={(userId) => removeMember.mutate({ userId })}
-            loading={addMember.isPending || removeMember.isPending}
+            loading={
+              addMember.isPending ||
+              addMultipleMembers.isPending ||
+              removeMember.isPending
+            }
           />
         </TabsContent>
       </Tabs>

@@ -107,12 +107,47 @@ export function useProject(id) {
 
   const addMemberMutation = useMutation({
     mutationFn: ({ userId }) => projectsApi.addProjectMember(id, userId),
-    onSuccess: () => {
+    onSuccess: (res) => {
+      if (!(res.status >= 200 && res.status < 300)) {
+        toast({
+          title: "Error",
+          description: "Failed to add member",
+          variant: "destructive",
+        });
+        return;
+      }
       queryClient.invalidateQueries({ queryKey: ["projects", id, "members"] });
       queryClient.invalidateQueries({ queryKey: ["projects", id] });
       toast({
         title: "Success",
         description: "Member added successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add member",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const addMultipleMembersMutation = useMutation({
+    mutationFn: ({ data }) => projectsApi.addMultipleProjectMembers(id, data),
+    onSuccess: (res) => {
+      if (!(res.status >= 200 && res.status < 300)) {
+        toast({
+          title: "Error",
+          description: "Failed to add members",
+          variant: "destructive",
+        });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ["projects", id, "members"] });
+      queryClient.invalidateQueries({ queryKey: ["projects", id] });
+      toast({
+        title: "Success",
+        description: "All members added successfully",
       });
     },
     onError: (error) => {
@@ -189,6 +224,7 @@ export function useProject(id) {
     isError: projectQuery.isError,
     error: projectQuery.error,
     addMember: addMemberMutation,
+    addMultipleMembers: addMultipleMembersMutation,
     removeMember: removeMemberMutation,
     updateProject: updateProjectMutation,
     deleteProject: deleteProjectMutation,

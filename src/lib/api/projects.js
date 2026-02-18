@@ -41,9 +41,15 @@ export const getProjectMembers = async (projectId) => {
 export const addProjectMember = async (projectId, userId) => {
   const response = await apiClient.post(
     `/projects/${projectId}/members/${userId}`,
-    null,
   );
-  return response.data;
+
+  return response;
+};
+
+// Add multiple members to project
+export const addMultipleProjectMembers = async (projectId, data) => {
+  const response = await apiClient.post(`/projects/${projectId}/members`, data);
+  return response;
 };
 
 // Remove member from project
