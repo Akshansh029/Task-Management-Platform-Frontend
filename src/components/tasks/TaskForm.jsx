@@ -84,7 +84,6 @@ const TaskForm = ({
         dueDate: new Date(formData.dueDate),
         projectId: parseInt(projectId),
       };
-      console.log(submissionData);
       onSubmit(submissionData);
     }
   };

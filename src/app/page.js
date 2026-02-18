@@ -51,7 +51,8 @@ export default function DashboardPage() {
   const { activeUser } = useActiveUser();
   const { projects, isLoading: projectsLoading } = useProjects(0, 50);
   const { users, isLoading: usersLoading } = useUsers(0, 50);
-  const { tasks, isLoading: tasksLoading } = useTasks(undefined, 0, 50);
+
+  const { tasks, isLoading: tasksLoading } = useTasks(activeUser?.id, 0, 50);
   const isLoading = projectsLoading || usersLoading || tasksLoading;
 
   // Stats calculation
@@ -62,10 +63,12 @@ export default function DashboardPage() {
   ).length;
   const totalUsers = users.totalElements;
 
+  console.log(tasks.content);
+
   // Recent data
   const recentProjects = projects.content.slice(0, 4);
   const myTasks = tasks.content
-    .filter((t) => t.assignee?.id === activeUser?.id)
+    .filter((t) => t.assigneeId === activeUser?.id)
     .slice(0, 5);
 
   return (
@@ -141,9 +144,9 @@ export default function DashboardPage() {
                           {project.title}
                         </h4>
                         <div className="flex items-center space-x-2 text-xs text-gray-500">
-                          <span>By {project.owner?.name}</span>
+                          <span>By {project.ownerName}</span>
                           <span>•</span>
-                          <span>{project.tasks?.length || 0} tasks</span>
+                          <span>{project.totalTasks || 0} tasks</span>
                         </div>
                       </div>
                     </div>
