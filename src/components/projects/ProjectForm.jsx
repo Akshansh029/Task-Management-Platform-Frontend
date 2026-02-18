@@ -13,17 +13,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useUsers } from "@/lib/hooks/useUsers";
 
 // const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
 const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
-  const { users } = useUsers();
+  const { users } = useUsers(0, 100);
+  const [ownerPopoverOpen, setOwnerPopoverOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -39,7 +48,8 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
       setFormData({
         title: project.title || "",
         description: project.description || "",
-        ownerId: project.owner?.id?.toString() || "",
+        ownerId:
+          project.ownerId?.toString() || project.owner?.id?.toString() || "",
         startDate: project.startDate ? project.startDate.split("T")[0] : "",
         endDate: project.endDate ? project.endDate.split("T")[0] : "",
       });
@@ -84,9 +94,15 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
         ...formData,
         ownerId: parseInt(formData.ownerId),
       };
-      onSubmit(submissionData);
+      console.log("Create project data:", formData);
+
+      // onSubmit(submissionData);
     }
   };
+
+  const selectedOwner = (users.content || []).find(
+    (u) => u.id.toString() === formData.ownerId,
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -128,23 +144,66 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
 
           <div className="space-y-2">
             <Label htmlFor="owner">Project Owner</Label>
-            <Select
-              value={formData.ownerId}
-              onValueChange={(value) =>
-                setFormData({ ...formData, ownerId: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Assign an owner" />
-              </SelectTrigger>
-              <SelectContent>
-                {users.content.map((user) => (
-                  <SelectItem key={user.id} value={user.id.toString()}>
-                    {user.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={ownerPopoverOpen} onOpenChange={setOwnerPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={ownerPopoverOpen}
+                  className={cn(
+                    "w-full justify-between font-normal",
+                    !formData.ownerId && "text-muted-foreground",
+                    errors.ownerId && "border-red-500",
+                  )}
+                >
+                  {selectedOwner
+                    ? selectedOwner.name
+                    : "Search by name or email..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-[var(--radix-popover-trigger-width)] p-0"
+                align="start"
+              >
+                <Command>
+                  <CommandInput placeholder="Search users..." />
+                  <CommandList className="max-h-[200px] overflow-y-auto">
+                    <CommandEmpty>No users found.</CommandEmpty>
+                    <CommandGroup>
+                      {(users.content || []).map((user) => (
+                        <CommandItem
+                          key={user.id}
+                          value={`${user.name} ${user.email}`}
+                          onSelect={() => {
+                            setFormData({
+                              ...formData,
+                              ownerId: user.id.toString(),
+                            });
+                            setOwnerPopoverOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              formData.ownerId === user.id.toString()
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          <div className="flex flex-col">
+                            <span>{user.name}</span>
+                            <span className="text-[10px] text-muted-foreground">
+                              {user.email}
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             {errors.ownerId && (
               <p className="text-xs text-red-500">{errors.ownerId}</p>
             )}
