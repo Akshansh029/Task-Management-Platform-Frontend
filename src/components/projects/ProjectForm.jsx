@@ -29,8 +29,8 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUsers } from "@/lib/hooks/useUsers";
 
-// const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
-const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
+const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
+  // const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
   const { users } = useUsers(0, 100);
   const [ownerPopoverOpen, setOwnerPopoverOpen] = useState(false);
 
@@ -93,10 +93,11 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
       const submissionData = {
         ...formData,
         ownerId: parseInt(formData.ownerId),
+        startDate: new Date(formData.startDate),
+        endDate: new Date(formData.endDate),
       };
-      console.log("Create project data:", formData);
 
-      // onSubmit(submissionData);
+      onSubmit(submissionData);
     }
   };
 
@@ -217,7 +218,10 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
                 type="date"
                 value={formData.startDate}
                 onChange={(e) =>
-                  setFormData({ ...formData, startDate: e.target.value })
+                  setFormData({
+                    ...formData,
+                    startDate: e.target.value,
+                  })
                 }
               />
             </div>
@@ -228,7 +232,10 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
                 type="date"
                 value={formData.endDate}
                 onChange={(e) =>
-                  setFormData({ ...formData, endDate: e.target.value })
+                  setFormData({
+                    ...formData,
+                    endDate: e.target.value,
+                  })
                 }
                 className={errors.endDate ? "border-red-500" : ""}
               />
@@ -243,18 +250,18 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit }) => {
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              // disabled={loading}
+              disabled={loading}
             >
               Cancel
             </Button>
-            {/* <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading
                 ? "Saving..."
                 : project
                   ? "Update Project"
                   : "Create Project"}
-            </Button> */}
-            <Button type="submit">Create Project</Button>
+            </Button>
+            {/* <Button type="submit">Create Project</Button> */}
           </DialogFooter>
         </form>
       </DialogContent>
