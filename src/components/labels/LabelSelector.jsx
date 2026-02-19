@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { 
-  Command, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandInput, 
-  CommandItem, 
-  CommandList 
-} from '@/components/ui/command';
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { Plus, Tag as TagIcon, Check } from 'lucide-react';
-import { useLabels } from '@/lib/hooks/useLabels';
+import React from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Plus, Tag as TagIcon, Check } from "lucide-react";
+import { useLabels } from "@/lib/hooks/useLabels";
 
 const LabelSelector = ({ selectedLabelIds = [], onSelect, onRemove }) => {
   const { labels, isLoading } = useLabels();
@@ -41,21 +41,24 @@ const LabelSelector = ({ selectedLabelIds = [], onSelect, onRemove }) => {
                 return (
                   <CommandItem
                     key={label.id}
+                    value={label.name}
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                     onSelect={() => {
                       if (isSelected) {
                         onRemove(label.id);
                       } else {
                         onSelect(label.id);
                       }
-                      // Close on select to feel snappy
-                      // setOpen(false); 
                     }}
                     className="flex items-center justify-between cursor-pointer"
                   >
                     <div className="flex items-center space-x-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: label.color }} 
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: label.color }}
                       />
                       <span>{label.name}</span>
                     </div>

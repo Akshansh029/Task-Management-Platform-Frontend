@@ -97,6 +97,7 @@ const ProjectForm = ({ open, onOpenChange, project, onSubmit, loading }) => {
       };
 
       onSubmit(submissionData);
+      onOpenChange(false);
     }
   };
 

@@ -21,6 +21,14 @@ import { formatDate } from "@/lib/utils";
 import TaskStatusBadge from "@/components/tasks/TaskStatusBadge";
 import TaskPriorityBadge from "@/components/tasks/TaskPriorityBadge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState, useEffect } from "react";
 
 const StatCard = ({ title, value, icon: Icon, colorClass, isLoading }) => (
   <Card className="overflow-hidden border-none shadow-sm bg-white hover:shadow-md transition-shadow">
@@ -52,8 +60,22 @@ export default function DashboardPage() {
   const { projects, isLoading: projectsLoading } = useProjects(0, 50);
   const { users, isLoading: usersLoading } = useUsers(0, 50);
 
-  const { tasks, isLoading: tasksLoading } = useTasks(undefined, 0, 50);
-  const isLoading = projectsLoading || usersLoading || tasksLoading;
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+  // Auto-select first project when projects load
+  useEffect(() => {
+    if (projects.content?.length > 0 && !selectedProjectId) {
+      setSelectedProjectId(projects.content[0].id);
+    }
+  }, [projects, selectedProjectId]);
+
+  const { tasks, isLoading: tasksLoading } = useTasks(selectedProjectId, 0, 50);
+  const isLoading =
+    projectsLoading || usersLoading || (tasksLoading && !!selectedProjectId);
+
+  const selectedProject = projects.content?.find(
+    (p) => p.id === selectedProjectId,
+  );
 
   // Stats calculation
   const totalProjects = projects.totalElements;
@@ -73,7 +95,33 @@ export default function DashboardPage() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <PageHeader
         title={`Welcome back, ${activeUser?.name || "User"}!`}
-        subtitle="Here's a quick look at what's happening in your workspace today."
+        subtitle={
+          selectedProject
+            ? `Overview for project: ${selectedProject.title}`
+            : "Select a project to see your overview."
+        }
+        actions={
+          <div className="flex items-center space-x-3">
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              Project Context:
+            </span>
+            <Select
+              value={selectedProjectId || ""}
+              onValueChange={setSelectedProjectId}
+            >
+              <SelectTrigger className="w-56 h-10 bg-white shadow-sm border-gray-200">
+                <SelectValue placeholder="Select Project" />
+              </SelectTrigger>
+              <SelectContent>
+                {projects.content?.map((project) => (
+                  <SelectItem key={project.id} value={project.id}>
+                    {project.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        }
       />
 
       {/* Stats Grid */}
