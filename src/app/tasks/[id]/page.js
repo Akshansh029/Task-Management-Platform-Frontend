@@ -231,7 +231,10 @@ export default function TaskDetailPage() {
             <CommentList
               comments={comments}
               onUpdateComment={(id, content) =>
-                updateComment.mutate({ id, data: { content } })
+                updateComment.mutate({
+                  id,
+                  data: { content, userId: activeUser?.id },
+                })
               }
               onDeleteComment={(id) => deleteComment.mutate(id)}
             />
