@@ -148,21 +148,21 @@ export function useTask(id, projectId) {
 
   const updateStatusMutation = useMutation({
     mutationFn: (status) => tasksApi.updateTaskStatus(id, status, projectId),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       queryClient.invalidateQueries({
         queryKey: ["projects", projectId, "tasks"],
       });
       toast({
         title: "Success",
-        description: `Task moved to ${data.status}`,
+        description: `Task status updated successfully`,
       });
     },
   });
 
   const assignUserMutation = useMutation({
     mutationFn: (userId) => tasksApi.assignTask(id, userId, projectId),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       toast({
         title: "Success",
