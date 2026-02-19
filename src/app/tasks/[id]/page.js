@@ -77,29 +77,32 @@ export default function TaskDetailPage() {
   const [titleValue, setTitleValue] = useState("");
 
   const onConfirmDelete = async () => {
-    const projectId = task.projectId;
     await deleteTask.mutateAsync();
     setIsDeleteOpen(false);
-    router.push(`/projects/${projectId}`);
+    router.push(`/projects/${projectIdFromUrl}`);
   };
 
-  const handleUpdateDescription = () => {
-    updateTask.mutate(
-      { ...task, description: descValue },
-      {
-        onSuccess: () => setIsEditingDesc(false),
-      },
-    );
+  const handleUpdateDescription = async () => {
+    await updateTask.mutateAsync({
+      title: task.title,
+      description: descValue,
+      priority: task.priority,
+      dueDate: task.dueDate,
+      projectId: projectIdFromUrl,
+    });
+    setIsEditingDesc(false);
   };
 
-  const handleUpdateTitle = () => {
+  const handleUpdateTitle = async () => {
     if (titleValue.trim() && titleValue !== task.title) {
-      updateTask.mutate(
-        { ...task, title: titleValue },
-        {
-          onSuccess: () => setIsEditingTitle(false),
-        },
-      );
+      await updateTask.mutateAsync({
+        title: titleValue,
+        description: task.description,
+        priority: task.priority,
+        dueDate: task.dueDate,
+        projectId: projectIdFromUrl,
+      });
+      setIsEditingTitle(false);
     } else {
       setIsEditingTitle(false);
     }
@@ -117,7 +120,7 @@ export default function TaskDetailPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <Link
-        href={`/projects/${task.projectId}`}
+        href={`/projects/${projectIdFromUrl}`}
         className="flex items-center text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors group mb-4"
       >
         <ArrowLeft className="h-4 w-4 mr-1 group-hover:-translate-x-1 transition-transform" />
@@ -185,15 +188,15 @@ export default function TaskDetailPage() {
                     <Button
                       size="sm"
                       onClick={handleUpdateDescription}
-                      // disabled={updateTask.isPending}
+                      disabled={updateTask.isPending}
                     >
-                      Save Changes
+                      {updateTask.isPending ? "Saving..." : "Save Changes"}
                     </Button>
                     <Button
                       size="sm"
                       variant="ghost"
                       onClick={() => setIsEditingDesc(false)}
-                      // disabled={updateTask.isPending}
+                      disabled={updateTask.isPending}
                     >
                       Cancel
                     </Button>

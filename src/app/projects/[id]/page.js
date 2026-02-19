@@ -158,7 +158,7 @@ export default function ProjectDetailPage() {
         task={selectedTask}
         initialStatus={initialTaskStatus}
         onSubmit={onTaskSubmit}
-        loading={createTask.isPending}
+        loading={createTask.isPending || updateTask.isPending}
       />
 
       <ProjectForm

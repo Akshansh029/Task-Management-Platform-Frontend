@@ -87,15 +87,15 @@ const TaskCard = ({ task, onEdit, onDelete, projectId, members, onAssign }) => {
         <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              {task.assignee ? (
+              {task.assigneeName ? (
                 <div className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors group/assignee">
                   <Avatar className="h-6 w-6">
                     <AvatarFallback className="text-[8px] bg-blue-50 text-blue-700">
-                      {getInitials(task.assignee.name)}
+                      {getInitials(task.assigneeName)}
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-[10px] font-medium text-gray-600 truncate max-w-[80px]">
-                    {task.assignee.name}
+                    {task.assigneeName}
                   </span>
                 </div>
               ) : (

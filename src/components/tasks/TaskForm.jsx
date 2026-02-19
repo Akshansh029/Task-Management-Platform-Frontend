@@ -24,7 +24,6 @@ import { TASK_STATUSES, TASK_PRIORITIES } from "@/lib/utils";
 const TaskForm = ({
   open,
   onOpenChange,
-  taskId,
   projectId,
   task,
   onSubmit,
@@ -125,7 +124,7 @@ const TaskForm = ({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="task-status">Status</Label>
               <Select
                 value={formData.status}
@@ -144,7 +143,7 @@ const TaskForm = ({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
             <div className="space-y-2">
               <Label htmlFor="task-priority">Priority</Label>
               <Select
@@ -165,9 +164,6 @@ const TaskForm = ({
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="task-due">Due Date</Label>
               <Input
@@ -180,6 +176,8 @@ const TaskForm = ({
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-4"></div>
 
           <DialogFooter className="pt-4">
             <Button

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "../hooks/use-toast";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api",
@@ -33,6 +34,12 @@ apiClient.interceptors.response.use(
 
     // Standardize error message property
     error.message = errorMessage;
+
+    toast({
+      variant: "destructive",
+      title: "Error",
+      description: errorMessage,
+    });
 
     // Maintain userMessage for compatibility
     error.userMessage = errorMessage;
