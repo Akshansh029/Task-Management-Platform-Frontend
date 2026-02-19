@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from "./client";
 
 // Get comments for a task
 export const getTaskComments = async (taskId) => {
@@ -8,7 +8,10 @@ export const getTaskComments = async (taskId) => {
 
 // Create comment
 export const createComment = async (taskId, commentData) => {
-  const response = await apiClient.post(`/tasks/${taskId}/comments`, commentData);
+  const response = await apiClient.post(
+    `/tasks/${taskId}/comments`,
+    commentData,
+  );
   return response.data;
 };
 

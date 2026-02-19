@@ -66,6 +66,8 @@ export default function TaskDetailPage() {
     removeLabel,
   } = useTask(id, projectIdFromUrl);
 
+  console.log(task);
+
   const { members } = useProject(projectIdFromUrl);
   const { comments, createComment, updateComment, deleteComment } =
     useComments(id);
@@ -235,7 +237,11 @@ export default function TaskDetailPage() {
             />
             <CommentForm
               onSubmit={(content) =>
-                createComment.mutate({ content, authorId: activeUser?.id })
+                createComment.mutate({
+                  content,
+                  authorId: activeUser?.id,
+                  projectId: projectIdFromUrl,
+                })
               }
               loading={createComment.isPending}
             />

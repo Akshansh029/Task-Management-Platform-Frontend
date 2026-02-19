@@ -35,6 +35,10 @@ apiClient.interceptors.response.use(
     // Standardize error message property
     error.message = errorMessage;
 
+    if (error?.errors && Array.isArray(error?.errors)) {
+      console.error("Validation errors: ", error.errors);
+    }
+
     toast({
       variant: "destructive",
       title: "Error",
