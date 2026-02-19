@@ -8,8 +8,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useActiveUser } from "@/providers/ActiveUserContext";
 import { getInitials } from "@/lib/utils";
 import { Check, ChevronDown } from "lucide-react";
@@ -23,7 +24,7 @@ const ActiveUserSelector = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center space-x-3 hover:bg-gray-100 p-1 px-2 rounded-md transition-colors outline-none">
+      <DropdownMenuTrigger className="flex items-center space-x-3 hover:bg-gray-100 p-1 px-2 rounded-md transition-colors outline-none focus:ring-2 focus:ring-blue-100">
         <Avatar className="h-8 w-8 outline-none border border-slate-200">
           <AvatarFallback className="bg-blue-100 text-blue-700 text-xs">
             {getInitials(activeUser.name)}
@@ -39,40 +40,46 @@ const ActiveUserSelector = () => {
         </div>
         <ChevronDown className="h-4 w-4 text-gray-400" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Select Active User</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-64 p-1">
+        <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Switch User
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <div className="overflow-y-auto">
-          {(users.content || []).map((user) => (
-            <DropdownMenuItem
-              key={user.id}
-              onClick={() => setActiveUser(user)}
-              className="flex items-center justify-between cursor-pointer"
-            >
-              <div className="flex items-center space-x-3">
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback className="text-[10px] bg-blue-50 text-blue-600">
-                    {getInitials(user.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium">{user.name}</span>
-                  <span className="text-[10px] text-gray-500 uppercase">
-                    {user.role}
-                  </span>
+        <div className="max-h-80 overflow-y-auto custom-scrollbar">
+          <DropdownMenuGroup>
+            {(users.content || []).map((user) => (
+              <DropdownMenuItem
+                key={user.id}
+                onSelect={() => setActiveUser(user)}
+                className="flex items-center justify-between cursor-pointer py-2.5 px-3"
+              >
+                <div className="flex items-center space-x-3 text-left">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="text-xs bg-slate-50 text-slate-600">
+                      {getInitials(user.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-900 leading-none">
+                      {user.name}
+                    </span>
+                    <span className="text-[10px] text-gray-500 uppercase mt-1.5 font-medium">
+                      {user.role}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              {activeUser.id === user.id && (
-                <Check className="h-4 w-4 text-blue-600" />
-              )}
-            </DropdownMenuItem>
-          ))}
+                {activeUser.id === user.id && (
+                  <Check className="h-4 w-4 text-blue-600 ml-2" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={() => setActiveUser(null)}
-          className="text-red-600 cursor-pointer"
+          onSelect={() => setActiveUser(null)}
+          className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-600 py-2"
         >
           Switch Profile / Logout
         </DropdownMenuItem>

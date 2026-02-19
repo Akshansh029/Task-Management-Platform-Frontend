@@ -26,11 +26,10 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error);
+    console.error("API Error:", error.response.data);
 
     // Extract error message from response (e.g., { message: "..." })
-    const errorMessage =
-      error.response?.data?.message || error.message || "An error occurred";
+    const errorMessage = error.response?.data?.message || "An error occurred";
 
     // Standardize error message property
     error.message = errorMessage;

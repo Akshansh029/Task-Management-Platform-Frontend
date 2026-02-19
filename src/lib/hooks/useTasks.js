@@ -126,7 +126,7 @@ export function useTask(id, projectId) {
   });
 
   const updateTaskMutation = useMutation({
-    mutationFn: (data) => tasksApi.updateTask(id, data, projectId),
+    mutationFn: (data) => tasksApi.updateTask(id, projectId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       queryClient.invalidateQueries({

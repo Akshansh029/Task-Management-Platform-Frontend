@@ -66,8 +66,6 @@ export default function TaskDetailPage() {
     removeLabel,
   } = useTask(id, projectIdFromUrl);
 
-  console.log(task);
-
   const { members } = useProject(projectIdFromUrl);
   const { comments, createComment, updateComment, deleteComment } =
     useComments(id);
@@ -93,6 +91,16 @@ export default function TaskDetailPage() {
       projectId: projectIdFromUrl,
     });
     setIsEditingDesc(false);
+  };
+
+  const handleUpdatePriority = async (val) => {
+    await updateTask.mutateAsync({
+      title: task.title,
+      description: task.description,
+      priority: val,
+      dueDate: task.dueDate,
+      projectId: projectIdFromUrl,
+    });
   };
 
   const handleUpdateTitle = async () => {
@@ -252,10 +260,10 @@ export default function TaskDetailPage() {
         </div>
 
         {/* Right Column: Metadata Panel */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <Card className="sticky top-8 shadow-sm border-gray-200 overflow-hidden rounded-2xl">
             <div className="h-2 bg-gradient-to-r from-blue-500 to-indigo-600" />
-            <CardContent className="p-6 space-y-8">
+            <CardContent className="p-6 space-y-4">
               {/* Status */}
               <div className="space-y-3">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] block">
@@ -287,9 +295,7 @@ export default function TaskDetailPage() {
                 </label>
                 <Select
                   value={task.priority}
-                  onValueChange={(val) =>
-                    updateTask.mutate({ ...task, priority: val })
-                  }
+                  onValueChange={(val) => handleUpdatePriority(val)}
                 >
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
                     <SelectValue>
@@ -318,20 +324,7 @@ export default function TaskDetailPage() {
                   <SelectTrigger className="w-full h-11 bg-gray-50/50 border-gray-200 hover:border-blue-300 transition-colors">
                     <SelectValue
                       placeholder={task.assigneeName || "Unassigned"}
-                    >
-                      {/* {task.assigneeName && ( */}
-                      {/* <div className="flex items-center space-x-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback className="text-[8px] bg-blue-50 text-blue-700">
-                            {getInitials(task.assigneeName)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium">
-                          {task.assigneeName}
-                        </span>
-                      </div> */}
-                      {/* )} */}
-                    </SelectValue>
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {members.content.map((m) => (
