@@ -1,9 +1,9 @@
 import apiClient from "./client";
 
 // Get all users with optional pagination
-export const getUsers = async (pageNo = 0, pageSize = 10) => {
+export const getUsers = async (pageNo = 0, pageSize = 10, search = "") => {
   const response = await apiClient.get("/users", {
-    params: { pageNo, pageSize },
+    params: { pageNo, pageSize, search },
   });
   return response.data;
 };

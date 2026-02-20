@@ -22,22 +22,16 @@ export default function UsersPage() {
     error,
     pageNo,
     setPageNo,
-    pageSize,
+    search,
+    setSearch,
     createUser,
     updateUser,
     deleteUser,
   } = useUsers();
 
-  const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
-  const filteredUsers = (users?.content || []).filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   const handleCreate = () => {
     setSelectedUser(null);
@@ -101,17 +95,17 @@ export default function UsersPage() {
         <Input
           placeholder="Search by name or email..."
           className="pl-9 bg-white"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       {isLoading ? (
         <TableSkeleton columns={5} rows={6} />
-      ) : filteredUsers.length > 0 ? (
+      ) : users.content.length > 0 ? (
         <>
           <UserTable
-            users={filteredUsers}
+            users={users.content}
             onEdit={handleEdit}
             onDelete={handleDeleteClick}
           />
@@ -151,14 +145,14 @@ export default function UsersPage() {
       ) : (
         <EmptyState
           icon={UsersIcon}
-          title={searchQuery ? "No matches found" : "No users yet"}
+          title={search ? "No matches found" : "No users yet"}
           description={
-            searchQuery
-              ? `Your search for "${searchQuery}" didn't return any results.`
+            search
+              ? `Your search for "${search}" didn't return any results.`
               : "Get started by adding your first team member to the platform."
           }
           action={
-            !searchQuery && (
+            !search && (
               <Button onClick={handleCreate}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add First User

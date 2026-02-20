@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   Table,
   TableBody,
@@ -8,12 +8,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Edit, Trash2 } from 'lucide-react';
-import { formatDate, getInitials } from '@/lib/utils';
-import UserRoleBadge from './UserRoleBadge';
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Edit, Trash2 } from "lucide-react";
+import { formatDate, getInitials } from "@/lib/utils";
+import UserRoleBadge from "./UserRoleBadge";
 
 const UserTable = ({ users, onEdit, onDelete }) => {
   return (
@@ -39,12 +39,16 @@ const UserTable = ({ users, onEdit, onDelete }) => {
                   </AvatarFallback>
                 </Avatar>
               </TableCell>
-              <TableCell className="font-medium text-gray-900">{user.name}</TableCell>
+              <TableCell className="font-medium text-gray-900">
+                {user.name}
+              </TableCell>
               <TableCell className="text-gray-500">{user.email}</TableCell>
               <TableCell>
                 <UserRoleBadge role={user.role} />
               </TableCell>
-              <TableCell className="text-gray-500">{formatDate(user.createdAt)}</TableCell>
+              <TableCell className="text-gray-500">
+                {formatDate(user.createdAt)}
+              </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end space-x-1">
                   <Button

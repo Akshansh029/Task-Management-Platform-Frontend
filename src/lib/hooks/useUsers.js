@@ -8,10 +8,11 @@ export function useUsers(initialPage = 0, initialSize = 10) {
   const { toast } = useToast();
   const [pageNo, setPageNo] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialSize);
+  const [search, setSearch] = useState("");
 
   const usersQuery = useQuery({
-    queryKey: ["users", pageNo, pageSize],
-    queryFn: () => usersApi.getUsers(pageNo, pageSize),
+    queryKey: ["users", pageNo, pageSize, search],
+    queryFn: () => usersApi.getUsers(pageNo, pageSize, search),
   });
 
   const createUserMutation = useMutation({
@@ -97,8 +98,11 @@ export function useUsers(initialPage = 0, initialSize = 10) {
     pageSize,
     setPageNo,
     setPageSize,
+    search,
+    setSearch,
     createUser: createUserMutation,
     updateUser: updateUserMutation,
+    updateUserRole: updateUserRoleMutation,
     deleteUser: deleteUserMutation,
   };
 }
