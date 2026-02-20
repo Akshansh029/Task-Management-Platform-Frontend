@@ -8,11 +8,17 @@ export function useProjects(initialPage = 0, initialSize = 10) {
   const { toast } = useToast();
   const [pageNo, setPageNo] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialSize);
+  const [search, setSearch] = useState("");
 
   const projectsQuery = useQuery({
-    queryKey: ["projects", pageNo, pageSize],
-    queryFn: () => projectsApi.getProjects(pageNo, pageSize),
+    queryKey: ["projects", pageNo, pageSize, search],
+    queryFn: () => projectsApi.getProjects(pageNo, pageSize, search),
   });
+
+  const handleSearch = (query) => {
+    setSearch(query);
+    setPageNo(0);
+  };
 
   const createProjectMutation = useMutation({
     mutationFn: projectsApi.createProject,
@@ -80,6 +86,8 @@ export function useProjects(initialPage = 0, initialSize = 10) {
     createProject: createProjectMutation,
     updateProject: updateProjectMutation,
     deleteProject: deleteProjectMutation,
+    search,
+    setSearch: handleSearch,
   };
 }
 

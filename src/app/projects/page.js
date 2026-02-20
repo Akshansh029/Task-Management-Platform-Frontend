@@ -25,19 +25,13 @@ export default function ProjectsPage() {
     createProject,
     updateProject,
     deleteProject,
+    search,
+    setSearch,
   } = useProjects();
 
-  const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
-
-  const filteredProjects = (projects?.content || []).filter(
-    (project) =>
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (project.description &&
-        project.description.toLowerCase().includes(searchQuery.toLowerCase())),
-  );
 
   const handleCreate = () => {
     setSelectedProject(null);
@@ -101,17 +95,17 @@ export default function ProjectsPage() {
         <Input
           placeholder="Search projects..."
           className="pl-9 bg-white"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       {isLoading ? (
         <CardGridSkeleton count={6} />
-      ) : filteredProjects.length > 0 ? (
+      ) : (projects?.content?.length || 0) > 0 ? (
         <>
           <ProjectGrid
-            projects={filteredProjects}
+            projects={projects?.content || []}
             onEdit={handleEdit}
             onDelete={handleDeleteClick}
           />
@@ -152,14 +146,14 @@ export default function ProjectsPage() {
       ) : (
         <EmptyState
           icon={FolderPlus}
-          title={searchQuery ? "No matching projects" : "No projects created"}
+          title={search ? "No matching projects" : "No projects created"}
           description={
-            searchQuery
-              ? `We couldn't find any projects matching "${searchQuery}".`
+            search
+              ? `We couldn't find any projects matching "${search}".`
               : "Get started by creating your first project to organize your team's work."
           }
           action={
-            !searchQuery && (
+            !search && (
               <Button onClick={handleCreate}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create First Project

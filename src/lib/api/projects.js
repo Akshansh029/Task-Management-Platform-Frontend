@@ -1,9 +1,9 @@
 import apiClient from "./client";
 
-// Get all projects with optional pagination
-export const getProjects = async (pageNo = 0, pageSize = 10) => {
+// Get all projects with optional pagination and search
+export const getProjects = async (pageNo = 0, pageSize = 5, search = "") => {
   const response = await apiClient.get("/projects", {
-    params: { pageNo, pageSize },
+    params: { pageNo, pageSize, search },
   });
   return response.data;
 };
