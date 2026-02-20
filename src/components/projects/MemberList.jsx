@@ -16,18 +16,17 @@ import { getInitials } from "@/lib/utils";
 import UserRoleBadge from "@/components/users/UserRoleBadge";
 import { useActiveUser } from "@/providers/ActiveUserContext";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const MemberList = ({
   project,
@@ -38,6 +37,8 @@ const MemberList = ({
 }) => {
   const { activeUser, users } = useActiveUser();
   const [open, setOpen] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Check if active user can manage members
   const isAdmin = activeUser?.role === "ADMIN";
@@ -48,6 +49,29 @@ const MemberList = ({
   const memberIds = members.content.map((m) => m.id);
   const nonMembers = users.content.filter((u) => !memberIds.includes(u.id));
 
+  const filteredUsers = nonMembers.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  const toggleUser = (userId) => {
+    const newSelected = new Set(selectedUsers);
+    if (newSelected.has(userId)) {
+      newSelected.delete(userId);
+    } else {
+      newSelected.add(userId);
+    }
+    setSelectedUsers(newSelected);
+  };
+
+  const handleAddMembers = () => {
+    onAddMultipleMembers(Array.from(selectedUsers));
+    setOpen(false);
+    setSelectedUsers(new Set());
+    setSearchQuery("");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -57,46 +81,116 @@ const MemberList = ({
         </h3>
 
         {canManage && (
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
+          <Dialog
+            open={open}
+            onOpenChange={(val) => {
+              setOpen(val);
+              if (!val) {
+                setSelectedUsers(new Set());
+                setSearchQuery("");
+              }
+            }}
+          >
+            <DialogTrigger asChild>
               <Button size="sm">
                 <UserPlus className="h-4 w-4 mr-2" />
-                Add Member
+                Add Members
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-0 w-[240px]" align="end">
-              <Command>
-                <CommandInput placeholder="Search users..." />
-                <CommandList>
-                  <CommandEmpty>No users found.</CommandEmpty>
-                  <CommandGroup heading="Platform Users">
-                    {nonMembers.map((user) => (
-                      <CommandItem
-                        key={user.id}
-                        value={`${user.name} ${user.email}`}
-                        onPointerDown={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        onSelect={() => {
-                          onAddMultipleMembers([user.id]);
-                          setOpen(false);
-                        }}
-                        className="flex items-center space-x-2 cursor-pointer"
-                      >
-                        <Avatar className="h-6 w-6">
-                          <AvatarFallback className="text-[10px]">
-                            {getInitials(user.name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span>{user.name}</span>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Team Members</DialogTitle>
+                <DialogDescription>
+                  Search and select users to add to this project.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search users..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+                <div className="border rounded-md">
+                  <ScrollArea className="h-[300px]">
+                    <div className="p-4 space-y-4">
+                      {filteredUsers.length === 0 ? (
+                        <p className="text-sm text-center text-muted-foreground py-8">
+                          No users found.
+                        </p>
+                      ) : (
+                        filteredUsers.map((user) => (
+                          <div
+                            key={user.id}
+                            className="flex items-center space-x-4 space-y-0"
+                          >
+                            <Checkbox
+                              id={`user-${user.id}`}
+                              checked={selectedUsers.has(user.id)}
+                              onChange={() => toggleUser(user.id)}
+                              className="mt-0"
+                            />
+                            <label
+                              htmlFor={`user-${user.id}`}
+                              className="flex items-center space-x-3 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer w-full"
+                            >
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="text-xs">
+                                  {getInitials(user.name)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex flex-col">
+                                <span>{user.name}</span>
+                                <span className="text-xs text-muted-foreground font-normal">
+                                  {user.email}
+                                </span>
+                              </div>
+                            </label>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </ScrollArea>
+                </div>
+                <div className="flex items-center justify-between text-sm text-muted-foreground px-1">
+                  <span>{selectedUsers.size} users selected</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (selectedUsers.size === filteredUsers.length) {
+                        setSelectedUsers(new Set());
+                      } else {
+                        const newSelected = new Set(selectedUsers);
+                        filteredUsers.forEach((u) => newSelected.add(u.id));
+                        setSelectedUsers(newSelected);
+                      }
+                    }}
+                    className="h-auto p-0"
+                  >
+                    {selectedUsers.size === filteredUsers.length &&
+                    filteredUsers.length > 0
+                      ? "Deselect All"
+                      : "Select All"}
+                  </Button>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleAddMembers}
+                  disabled={selectedUsers.size === 0 || loading}
+                >
+                  Add ({selectedUsers.size})
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
 
