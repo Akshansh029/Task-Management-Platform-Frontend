@@ -35,10 +35,9 @@ const MemberList = ({
   onRemoveMember,
   loading,
 }) => {
-  const { activeUser, users } = useActiveUser();
+  const { activeUser, users, search, setSearch } = useActiveUser();
   const [open, setOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState(new Set());
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Check if active user can manage members
   const isAdmin = activeUser?.role === "ADMIN";
@@ -48,12 +47,6 @@ const MemberList = ({
   // Filter out users who are already members
   const memberIds = members.content.map((m) => m.id);
   const nonMembers = users.content.filter((u) => !memberIds.includes(u.id));
-
-  const filteredUsers = nonMembers.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   const toggleUser = (userId) => {
     const newSelected = new Set(selectedUsers);
@@ -69,7 +62,7 @@ const MemberList = ({
     onAddMultipleMembers(Array.from(selectedUsers));
     setOpen(false);
     setSelectedUsers(new Set());
-    setSearchQuery("");
+    setSearch("");
   };
 
   return (
@@ -87,7 +80,7 @@ const MemberList = ({
               setOpen(val);
               if (!val) {
                 setSelectedUsers(new Set());
-                setSearchQuery("");
+                setSearch("");
               }
             }}
           >
@@ -109,20 +102,20 @@ const MemberList = ({
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Search users..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                     className="pl-8"
                   />
                 </div>
                 <div className="border rounded-md">
                   <ScrollArea className="h-[300px]">
                     <div className="p-4 space-y-4">
-                      {filteredUsers.length === 0 ? (
+                      {nonMembers.length === 0 ? (
                         <p className="text-sm text-center text-muted-foreground py-8">
                           No users found.
                         </p>
                       ) : (
-                        filteredUsers.map((user) => (
+                        nonMembers.map((user) => (
                           <div
                             key={user.id}
                             className="flex items-center space-x-4 space-y-0"
@@ -161,18 +154,18 @@ const MemberList = ({
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      if (selectedUsers.size === filteredUsers.length) {
+                      if (selectedUsers.size === nonMembers.length) {
                         setSelectedUsers(new Set());
                       } else {
                         const newSelected = new Set(selectedUsers);
-                        filteredUsers.forEach((u) => newSelected.add(u.id));
+                        nonMembers.forEach((u) => newSelected.add(u.id));
                         setSelectedUsers(newSelected);
                       }
                     }}
                     className="h-auto p-0"
                   >
-                    {selectedUsers.size === filteredUsers.length &&
-                    filteredUsers.length > 0
+                    {selectedUsers.size === nonMembers.length &&
+                    nonMembers.length > 0
                       ? "Deselect All"
                       : "Select All"}
                   </Button>

@@ -9,11 +9,12 @@ export function ActiveUserProvider({ children }) {
   const [activeUser, setActiveUser] = useState(null);
   const [users, setUsers] = useState({ content: [] });
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const initUser = async () => {
       try {
-        const fetchedUsers = await getUsers(0, 50); // Fetch a larger batch for selection
+        const fetchedUsers = await getUsers(0, 50, search); // Fetch a larger batch for selection
         setUsers(fetchedUsers);
 
         const storedId = localStorage.getItem("activeUserId");
@@ -33,7 +34,7 @@ export function ActiveUserProvider({ children }) {
     };
 
     initUser();
-  }, []);
+  }, [search]);
 
   const handleSetActiveUser = (user) => {
     if (user) {
@@ -51,6 +52,8 @@ export function ActiveUserProvider({ children }) {
         activeUser,
         setActiveUser: handleSetActiveUser,
         users,
+        search,
+        setSearch,
         loading,
       }}
     >
