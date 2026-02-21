@@ -11,6 +11,7 @@ import {
   ArrowRight,
   TrendingUp,
   ExternalLink,
+  CheckCircle2,
 } from "lucide-react";
 import { useProjects } from "@/lib/hooks/useProjects";
 import { useUsers } from "@/lib/hooks/useUsers";
@@ -29,27 +30,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useEffect } from "react";
+import { useStats } from "@/lib/hooks/useStats";
 
 const StatCard = ({ title, value, icon: Icon, colorClass, isLoading }) => (
-  <Card className="overflow-hidden border-none shadow-sm bg-white hover:shadow-md transition-shadow">
+  <Card className="overflow-hidden border-none shadow-sm bg-white hover:shadow-md transition-shadow flex flex-col">
     <div className={`h-1.5 ${colorClass}`} />
-    <CardContent className="p-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-            {title}
-          </p>
-          {isLoading ? (
-            <Skeleton className="h-8 w-16" />
-          ) : (
-            <h2 className="text-3xl font-bold text-gray-900">{value}</h2>
-          )}
-        </div>
+    <CardContent className="p-6 flex flex-col">
+      <div className="flex items-start justify-between">
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+          {title}
+        </p>
         <div
           className={`p-3 rounded-2xl ${colorClass.replace("bg-", "bg-opacity-10 text-").replace("text-", "text-opacity-100")}`}
         >
           <Icon className="h-6 w-6" />
         </div>
+      </div>
+
+      <div>
+        {isLoading ? (
+          <Skeleton className="h-8 w-16" />
+        ) : (
+          <h2 className="text-3xl font-bold text-gray-900">{value}</h2>
+        )}
       </div>
     </CardContent>
   </Card>
@@ -59,6 +62,7 @@ export default function DashboardPage() {
   const { activeUser } = useActiveUser();
   const { projects, isLoading: projectsLoading } = useProjects(0, 50);
   const { users, isLoading: usersLoading } = useUsers(0, 50);
+  const { stats, isLoading: statsLoading } = useStats();
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
@@ -70,20 +74,16 @@ export default function DashboardPage() {
   }, [projects, selectedProjectId]);
 
   const { tasks, isLoading: tasksLoading } = useTasks(selectedProjectId, 0, 50);
+
   const isLoading =
-    projectsLoading || usersLoading || (tasksLoading && !!selectedProjectId);
+    projectsLoading ||
+    usersLoading ||
+    statsLoading ||
+    (tasksLoading && !!selectedProjectId);
 
   const selectedProject = projects.content?.find(
     (p) => p.id === selectedProjectId,
   );
-
-  // Stats calculation
-  const totalProjects = projects.totalElements;
-  const totalTasks = tasks.totalElements;
-  const inProgressTasks = tasks.content.filter(
-    (t) => t.status === "IN_PROGRESS",
-  ).length;
-  const totalUsers = users.totalElements;
 
   // Recent data
   const recentProjects = projects.content.slice(0, 4);
@@ -125,31 +125,42 @@ export default function DashboardPage() {
       />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         <StatCard
           title="Total Projects"
-          value={totalProjects}
+          value={stats?.totalProjects || 0}
           icon={FolderKanban}
           colorClass="bg-blue-600 text-blue-600"
           isLoading={isLoading}
         />
         <StatCard
           title="Total Tasks"
-          value={totalTasks}
+          value={stats?.totalTasks || 0}
           icon={CheckSquare}
           colorClass="bg-indigo-600 text-indigo-600"
           isLoading={isLoading}
         />
         <StatCard
           title="In Progress"
-          value={inProgressTasks}
+          value={stats?.inProgressTasks || 0}
           icon={Clock}
           colorClass="bg-amber-600 text-amber-600"
           isLoading={isLoading}
         />
         <StatCard
+          title="Completion Rate"
+          value={
+            (stats?.taskCompletionRate
+              ? Math.round(stats.taskCompletionRate, 2)
+              : 0) + "%"
+          }
+          icon={CheckCircle2}
+          colorClass="bg-green-600 text-green-600"
+          isLoading={isLoading}
+        />
+        <StatCard
           title="Team Members"
-          value={totalUsers}
+          value={stats?.totalUsers || 0}
           icon={Users}
           colorClass="bg-purple-600 text-purple-600"
           isLoading={isLoading}
