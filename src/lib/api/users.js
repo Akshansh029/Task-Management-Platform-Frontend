@@ -27,8 +27,8 @@ export const updateUser = async (id, userData) => {
 };
 
 // Update user role
-export const updateUserRole = async (id, roleData) => {
-  const response = await apiClient.patch(`/users/${id}`, roleData);
+export const updateUserRole = async (id, role) => {
+  const response = await apiClient.patch(`/users/${id}`, { role });
   return response.data;
 };
 

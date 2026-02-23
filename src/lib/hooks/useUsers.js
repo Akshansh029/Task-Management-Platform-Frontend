@@ -40,13 +40,13 @@ export function useUsers(initialPage = 0, initialSize = 10) {
       queryClient.invalidateQueries({ queryKey: ["users", data.id] });
       toast({
         title: "Success",
-        description: "User updated successfully",
+        description: "User details updated successfully",
       });
     },
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to update user",
+        description: error.message || "Failed to update user details",
         variant: "destructive",
       });
     },
@@ -59,13 +59,13 @@ export function useUsers(initialPage = 0, initialSize = 10) {
       queryClient.invalidateQueries({ queryKey: ["users", data.id] });
       toast({
         title: "Success",
-        description: "User updated successfully",
+        description: "User role updated successfully",
       });
     },
     onError: (error) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to update user",
+        description: error.message || "Failed to update user role",
         variant: "destructive",
       });
     },

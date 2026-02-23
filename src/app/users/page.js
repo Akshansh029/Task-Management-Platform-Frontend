@@ -26,6 +26,7 @@ export default function UsersPage() {
     setSearch,
     createUser,
     updateUser,
+    updateUserRole,
     deleteUser,
   } = useUsers();
 
@@ -50,7 +51,34 @@ export default function UsersPage() {
 
   const onFormSubmit = async (data) => {
     if (selectedUser) {
-      await updateUser.mutateAsync({ id: selectedUser.id, data });
+      const promises = [];
+
+      // Update name/email if changed
+      if (
+        data.name !== selectedUser.name ||
+        data.email !== selectedUser.email
+      ) {
+        promises.push(
+          updateUser.mutateAsync({
+            id: selectedUser.id,
+            data: { name: data.name, email: data.email },
+          }),
+        );
+      }
+
+      // Update role if changed
+      if (data.role !== selectedUser.role) {
+        promises.push(
+          updateUserRole.mutateAsync({
+            id: selectedUser.id,
+            data: data.role,
+          }),
+        );
+      }
+
+      if (promises.length > 0) {
+        await Promise.all(promises);
+      }
     } else {
       await createUser.mutateAsync(data);
     }
@@ -167,7 +195,11 @@ export default function UsersPage() {
         onOpenChange={setIsFormOpen}
         user={selectedUser}
         onSubmit={onFormSubmit}
-        loading={createUser.isPending || updateUser.isPending}
+        loading={
+          createUser.isPending ||
+          updateUser.isPending ||
+          updateUserRole.isPending
+        }
       />
 
       <ConfirmDialog
