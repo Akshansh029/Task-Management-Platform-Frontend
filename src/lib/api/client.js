@@ -26,7 +26,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response.data);
+    // console.error("API Error:", error.response.data);
 
     // Extract error message from response (e.g., { message: "..." })
     const errorMessage = error.response?.data?.message || "An error occurred";
@@ -34,9 +34,9 @@ apiClient.interceptors.response.use(
     // Standardize error message property
     error.message = errorMessage;
 
-    if (error?.errors && Array.isArray(error?.errors)) {
-      console.error("Validation errors: ", error.errors);
-    }
+    // if (error?.errors && Array.isArray(error?.errors)) {
+    //   console.error("Validation errors: ", error.errors);
+    // }
 
     toast({
       variant: "destructive",
