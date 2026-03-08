@@ -54,27 +54,27 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left side - Design/Illustration (Visible on desktop) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-muted items-center justify-center p-12 relative overflow-hidden bg-gradient-to-br from-primary/20 via-background to-secondary/20">
-        <div className="relative z-10 text-center space-y-6 max-w-md">
-          <div className="w-full h-[400px] relative mb-10 animate-pulse-slow">
-            <Image
-              src="/auth-illustration.png"
-              alt="Auth Illustration"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
+      {/* Left side - Illustration */}
+      <div className="hidden lg:flex lg:w-1/2 bg-muted items-center justify-center p-12 relative overflow-hidden bg-gradient-to-tr from-secondary/20 via-background to-primary/20">
+        {/* <div className="relative z-10 text-center space-y-6 max-w-md"> */}
+        <div className="w-full h-[400px] relative mb-10">
+          <Image
+            src="/Coworking.svg"
+            alt="Auth Illustration"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        {/* <h1 className="text-4xl font-bold tracking-tight text-foreground">
             Manage Tasks with{" "}
             <span className="text-primary italic">Elegance</span>
           </h1>
           <p className="text-lg text-muted-foreground">
             Join thousands of teams streamlining their workflow with our premium
             platform.
-          </p>
-        </div>
+          </p> */}
+        {/* </div> */}
 
         {/* Decorative elements */}
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-3xl animate-float" />
@@ -111,7 +111,7 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 border-muted-foreground/20 focus:border-primary transition-all duration-300"
+                    className="h-10 border-muted-foreground/20 focus:border-primary transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
@@ -122,14 +122,15 @@ export default function LoginPage() {
                     id="password"
                     type="password"
                     required
+                    placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 border-muted-foreground/20 focus:border-primary transition-all duration-300"
+                    className="h-10 border-muted-foreground/20 focus:border-primary transition-all duration-300"
                   />
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-12 text-lg font-semibold transition-transform active:scale-95"
+                  className="w-full h-10 text-sm font-semibold transition-transform active:scale-95"
                   disabled={loading}
                 >
                   {loading ? "Signing in..." : "Sign In"}
@@ -148,10 +149,6 @@ export default function LoginPage() {
               </div>
             </CardFooter>
           </Card>
-
-          <div className="text-center text-xs text-muted-foreground pt-4">
-            &copy; 2026 Antigravity Task Platform. All rights reserved.
-          </div>
         </div>
       </div>
     </div>

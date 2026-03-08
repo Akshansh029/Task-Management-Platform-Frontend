@@ -30,6 +30,7 @@ export function ActiveUserProvider({ children }) {
       setActiveUser(null);
     } finally {
       setLoading(false);
+      console.log("Current user: ", activeUser);
     }
   };
 

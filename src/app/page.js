@@ -61,7 +61,6 @@ const StatCard = ({ title, value, icon: Icon, colorClass, isLoading }) => (
 export default function DashboardPage() {
   const { activeUser } = useActiveUser();
   const { projects, isLoading: projectsLoading } = useProjects(0, 50);
-  const { users, isLoading: usersLoading } = useUsers(0, 50);
   const { stats, isLoading: statsLoading } = useStats();
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -76,10 +75,7 @@ export default function DashboardPage() {
   const { tasks, isLoading: tasksLoading } = useTasks(selectedProjectId, 0, 50);
 
   const isLoading =
-    projectsLoading ||
-    usersLoading ||
-    statsLoading ||
-    (tasksLoading && !!selectedProjectId);
+    projectsLoading || statsLoading || (tasksLoading && !!selectedProjectId);
 
   const selectedProject = projects.content?.find(
     (p) => p.id === selectedProjectId,

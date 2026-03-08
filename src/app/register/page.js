@@ -52,25 +52,25 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left side - Design/Illustration (Visible on desktop) */}
+      {/* Left side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-muted items-center justify-center p-12 relative overflow-hidden bg-gradient-to-tr from-secondary/20 via-background to-primary/20">
-        <div className="relative z-10 text-center space-y-6 max-w-md">
-          <div className="w-full h-[400px] relative mb-10 animate-float">
-            <Image
-              src="/auth-illustration.png"
-              alt="Auth Illustration"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
+        {/* <div className="relative z-10 text-center space-y-6 max-w-md"> */}
+        <div className="w-full h-[400px] relative mb-10">
+          <Image
+            src="/Coworking.svg"
+            alt="Auth Illustration"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        {/* <h1 className="text-4xl font-bold tracking-tight text-foreground">
             Start Your <span className="text-primary italic">Journey</span>
           </h1>
           <p className="text-lg text-muted-foreground">
             Create an account and start collaborating with your team today.
           </p>
-        </div>
+        </div> */}
 
         {/* Decorative elements */}
         <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-3xl animate-float-delayed" />
@@ -107,7 +107,7 @@ export default function RegisterPage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="h-12 border-muted-foreground/20 focus:border-primary transition-all duration-300"
+                    className="h-10 border-muted-foreground/20 focus:border-primary transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
@@ -119,7 +119,7 @@ export default function RegisterPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 border-muted-foreground/20 focus:border-primary transition-all duration-300"
+                    className="h-10 border-muted-foreground/20 focus:border-primary transition-all duration-300"
                   />
                 </div>
                 <div className="space-y-2">
@@ -128,14 +128,15 @@ export default function RegisterPage() {
                     id="password"
                     type="password"
                     required
+                    placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 border-muted-foreground/20 focus:border-primary transition-all duration-300"
+                    className="h-10 border-muted-foreground/20 focus:border-primary transition-all duration-300"
                   />
                 </div>
                 <Button
                   type="submit"
-                  className="w-full h-12 text-lg font-semibold transition-transform active:scale-95 mt-4"
+                  className="w-full h-10 text-sm font-semibold transition-transform active:scale-95 mt-4"
                   disabled={loading}
                 >
                   {loading ? "Creating account..." : "Create Account"}
@@ -154,10 +155,6 @@ export default function RegisterPage() {
               </div>
             </CardFooter>
           </Card>
-
-          <div className="text-center text-xs text-muted-foreground pt-4">
-            By signing up, you agree to our Terms of Service and Privacy Policy.
-          </div>
         </div>
       </div>
     </div>
