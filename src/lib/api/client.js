@@ -12,9 +12,9 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const activeUserId = localStorage.getItem("activeUserId");
-      if (activeUserId) {
-        config.headers["X-User-ID"] = activeUserId;
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
       }
     }
     return config;
@@ -24,9 +24,19 @@ apiClient.interceptors.request.use(
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     // console.error("API Error:", error.response.data);
+
+    // If unauthorized, redirect to login
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
+    }
 
     // Extract error message from response (e.g., { message: "..." })
     const errorMessage = error.response?.data?.message || "An error occurred";

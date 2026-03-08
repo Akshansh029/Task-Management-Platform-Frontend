@@ -11,7 +11,21 @@ export function UserSelectionGuard({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !activeUser && pathname !== "/select-user") {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    if (
+      !loading &&
+      !token &&
+      pathname !== "/login" &&
+      pathname !== "/register"
+    ) {
+      router.push("/login");
+      return;
+    }
+
+    if (!loading && token && !activeUser && pathname !== "/select-user") {
+      // If we have a token but no active user (persona/profile), go to select-user
       router.push("/select-user");
     }
   }, [activeUser, loading, pathname, router]);
@@ -24,8 +38,21 @@ export function UserSelectionGuard({ children }) {
     );
   }
 
-  // If not on selection page and no user, don't render anything while redirecting
-  if (!activeUser && pathname !== "/select-user") {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  // If not on auth/selection page and no token/user, don't render anything while redirecting
+  if (!token && pathname !== "/login" && pathname !== "/register") {
+    return null;
+  }
+
+  if (
+    token &&
+    !activeUser &&
+    pathname !== "/select-user" &&
+    pathname !== "/login" &&
+    pathname !== "/register"
+  ) {
     return null;
   }
 

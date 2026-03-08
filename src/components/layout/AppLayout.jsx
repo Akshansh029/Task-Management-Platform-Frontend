@@ -8,7 +8,12 @@ import { cn } from "@/lib/utils";
 
 export function AppLayout({ children }) {
   const pathname = usePathname();
+  const isAuthPage = pathname === "/login" || pathname === "/register";
   const isSelectUserPage = pathname === "/select-user";
+
+  if (isAuthPage) {
+    return <main className="min-h-screen">{children}</main>;
+  }
 
   return (
     <UserSelectionGuard>
