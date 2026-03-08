@@ -4,11 +4,13 @@ import { useActiveUser } from "@/providers/ActiveUserContext";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/lib/hooks/use-toast";
 
 export function UserSelectionGuard({ children }) {
   const { activeUser, loading } = useActiveUser();
   const router = useRouter();
   const pathname = usePathname();
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -26,24 +28,20 @@ export function UserSelectionGuard({ children }) {
           router.push("/login");
           return;
         }
-
-        if (
-          !loading &&
-          isAuthenticated &&
-          !activeUser &&
-          pathname !== "/select-user"
-        ) {
-          router.push("/select-user");
-        }
       } catch (error) {
         console.error("Auth check failed", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Session expired. Please login again.",
+        });
         if (pathname !== "/login" && pathname !== "/register")
           router.push("/login");
       }
     };
 
     checkAuth();
-  }, [activeUser, loading, pathname, router]);
+  }, [loading, pathname, router]);
 
   if (loading) {
     return (
@@ -53,11 +51,5 @@ export function UserSelectionGuard({ children }) {
     );
   }
 
-  // Fallback for visual hiding while redirecting (optional since redirect is async)
-  // We'll rely on the redirect above for total protection.
   return children;
-
-  // If we are on the selection page, we don't want the sidebar/navbar layout
-  // But wait, the Sidebar/Navbar are in the layout.js.
-  // I should probably move them inside the guard or make them conditional in layout.js.
 }

@@ -18,12 +18,15 @@ import {
 import { login } from "@/lib/api/auth";
 import { useToast } from "@/lib/hooks/use-toast";
 
+import { useActiveUser } from "@/providers/ActiveUserContext";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { refreshProfile } = useActiveUser();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,6 +39,9 @@ export default function LoginPage() {
         title: "Success",
         description: message || "Logged in successfully!",
       });
+
+      // Refresh the profile into context
+      await refreshProfile();
 
       router.push("/");
     } catch (error) {

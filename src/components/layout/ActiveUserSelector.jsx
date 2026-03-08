@@ -59,54 +59,60 @@ const ActiveUserSelector = () => {
         </div>
         <ChevronDown className="h-4 w-4 text-gray-400" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 p-1">
-        <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-          Switch User
-        </DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-64 p-2">
+        <div className="flex flex-col items-center p-4 space-y-3 bg-slate-50 rounded-lg mb-2">
+          <Avatar className="h-16 w-16 border-2 border-primary/10">
+            <AvatarFallback className="bg-primary/5 text-primary text-xl font-bold">
+              {getInitials(activeUser.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col items-center text-center">
+            <span className="text-base font-bold text-gray-900 leading-tight">
+              {activeUser.name}
+            </span>
+            <span className="text-sm font-medium text-primary mt-0.5">
+              {activeUser.role}
+            </span>
+            <span className="text-xs text-gray-400 mt-1">
+              {activeUser.email}
+            </span>
+          </div>
+        </div>
+
         <DropdownMenuSeparator />
 
-        <div className="max-h-80 overflow-y-auto custom-scrollbar">
-          <DropdownMenuGroup>
-            {(users.content || []).map((user) => (
-              <DropdownMenuItem
-                key={user.id}
-                onSelect={() => setActiveUser(user)}
-                className="flex items-center justify-between cursor-pointer py-2.5 px-3"
-              >
-                <div className="flex items-center space-x-3 text-left">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="text-xs bg-slate-50 text-slate-600">
-                      {getInitials(user.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-900 leading-none">
-                      {user.name}
-                    </span>
-                    <span className="text-[10px] text-gray-500 uppercase mt-1.5 font-medium">
-                      {user.role}
-                    </span>
-                  </div>
-                </div>
-                {activeUser.id === user.id && (
-                  <Check className="h-4 w-4 text-blue-600 ml-2" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
+        <div className="grid grid-cols-3 gap-2 py-3 px-1 text-center border-b border-slate-100 mb-2">
+          <div className="flex flex-col">
+            <span className="text-lg font-bold text-primary">
+              {activeUser.ownedProjectsCount || 0}
+            </span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold tracking-tight">
+              Owned
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold text-primary">
+              {activeUser.assignedTasksCount || 0}
+            </span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold tracking-tight">
+              Tasks
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold text-primary">
+              {activeUser.memberOfProjectsCount || 0}
+            </span>
+            <span className="text-[10px] uppercase text-slate-400 font-bold tracking-tight">
+              Joined
+            </span>
+          </div>
         </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={() => setActiveUser(null)}
-          className="cursor-pointer py-2 px-3"
-        >
-          Switch Profile
-        </DropdownMenuItem>
+
         <DropdownMenuItem
           onSelect={handleLogout}
-          className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-600 py-2 px-3"
+          className="text-destructive cursor-pointer focus:bg-destructive/5 focus:text-destructive py-3 px-3 flex items-center justify-center font-bold tracking-wide rounded-md transition-all duration-200"
         >
-          Logout Entire App
+          LOG OUT
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

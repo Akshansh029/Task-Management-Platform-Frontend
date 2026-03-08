@@ -1,70 +1,48 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { getUsers } from "@/lib/api/users";
+import { getCurrentUser } from "@/lib/api/users";
 
 const ActiveUserContext = createContext(undefined);
 
 export function ActiveUserProvider({ children }) {
   const [activeUser, setActiveUser] = useState(null);
-  const [users, setUsers] = useState({ content: [] });
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    const initUser = async () => {
-      // Don't fetch users if on login or register pages
-      if (typeof window !== "undefined") {
-        const isAuthPage =
-          window.location.pathname === "/login" ||
-          window.location.pathname === "/register";
-        if (isAuthPage) {
-          setLoading(false);
-          return;
-        }
-      }
-
-      try {
-        const fetchedUsers = await getUsers(0, 50, search); // Fetch a larger batch for selection
-        setUsers(fetchedUsers);
-
-        const storedId = localStorage.getItem("activeUserId");
-        if (storedId) {
-          const user = fetchedUsers.content?.find(
-            (u) => u.id.toString() === storedId,
-          );
-          if (user) {
-            setActiveUser(user);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch users:", error);
-      } finally {
+  const fetchProfile = async () => {
+    // Don't fetch if on login or register pages
+    if (typeof window !== "undefined") {
+      const isAuthPage =
+        window.location.pathname === "/login" ||
+        window.location.pathname === "/register";
+      if (isAuthPage) {
         setLoading(false);
+        return;
       }
-    };
+    }
 
-    initUser();
-  }, [search]);
-
-  const handleSetActiveUser = (user) => {
-    if (user) {
-      localStorage.setItem("activeUserId", user.id.toString());
+    try {
+      setLoading(true);
+      const user = await getCurrentUser();
       setActiveUser(user);
-    } else {
-      localStorage.removeItem("activeUserId");
+    } catch (error) {
+      console.error("Failed to fetch user profile:", error);
       setActiveUser(null);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   return (
     <ActiveUserContext.Provider
       value={{
         activeUser,
-        setActiveUser: handleSetActiveUser,
-        users,
-        search,
-        setSearch,
+        setActiveUser, // Keeping this for manual updates if needed (e.g. after edit profile)
+        refreshProfile: fetchProfile,
         loading,
       }}
     >

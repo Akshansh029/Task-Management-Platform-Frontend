@@ -36,3 +36,12 @@ export const updateUserRole = async (id, role) => {
 export const deleteUser = async (id) => {
   await apiClient.delete(`/users/${id}`);
 };
+
+/**
+ * Get current authenticated user details
+ * @returns {Promise<Object>}
+ */
+export const getCurrentUser = async () => {
+  const response = await apiClient.get("/users/me");
+  return response.data;
+};
