@@ -10,17 +10,6 @@ export function ActiveUserProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async () => {
-    // Don't fetch if on login or register pages
-    if (typeof window !== "undefined") {
-      const isAuthPage =
-        window.location.pathname === "/login" ||
-        window.location.pathname === "/register";
-      if (isAuthPage) {
-        setLoading(false);
-        return;
-      }
-    }
-
     try {
       setLoading(true);
       const user = await getCurrentUser();
@@ -30,19 +19,27 @@ export function ActiveUserProvider({ children }) {
       setActiveUser(null);
     } finally {
       setLoading(false);
-      console.log("Current user: ", activeUser);
     }
   };
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    const isAuthPage =
+      window.location.pathname === "/login" ||
+      window.location.pathname === "/register";
+
+    // Automatically fetch if we're on a non-auth page and don't have a user yet
+    if (!isAuthPage && !activeUser) {
+      fetchProfile();
+    } else if (isAuthPage) {
+      setLoading(false);
+    }
+  }, [activeUser]);
 
   return (
     <ActiveUserContext.Provider
       value={{
         activeUser,
-        setActiveUser, // Keeping this for manual updates if needed (e.g. after edit profile)
+        setActiveUser,
         refreshProfile: fetchProfile,
         loading,
       }}
