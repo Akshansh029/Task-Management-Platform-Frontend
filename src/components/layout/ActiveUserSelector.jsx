@@ -14,9 +14,28 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useActiveUser } from "@/providers/ActiveUserContext";
 import { getInitials } from "@/lib/utils";
 import { Check, ChevronDown } from "lucide-react";
+import { logout as apiLogout } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/lib/hooks/use-toast";
 
 const ActiveUserSelector = () => {
   const { activeUser, setActiveUser, users, loading } = useActiveUser();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+      setActiveUser(null);
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   if (loading || !activeUser) {
     return <div className="h-8 w-32 bg-gray-100 animate-pulse rounded-md" />;
@@ -79,9 +98,15 @@ const ActiveUserSelector = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => setActiveUser(null)}
-          className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-600 py-2"
+          className="cursor-pointer py-2 px-3"
         >
-          Switch Profile / Logout
+          Switch Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={handleLogout}
+          className="text-red-600 cursor-pointer focus:bg-red-50 focus:text-red-600 py-2 px-3"
+        >
+          Logout Entire App
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -30,9 +30,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { token, message } = await login({ email, password });
-
-      localStorage.setItem("token", token);
+      const { message } = await login({ email, password });
 
       toast({
         title: "Success",

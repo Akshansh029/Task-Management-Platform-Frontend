@@ -19,3 +19,12 @@ export const register = async (userData) => {
   const response = await apiClient.post("/auth/register", userData);
   return response.data;
 };
+
+/**
+ * Logout function
+ * @returns {Promise<Object>}
+ */
+export const logout = async () => {
+  const response = await apiClient.post("/auth/logout");
+  return response.data;
+};

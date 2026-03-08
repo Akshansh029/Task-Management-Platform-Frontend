@@ -11,23 +11,38 @@ export function UserSelectionGuard({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/session");
+        const data = await response.json();
+        const isAuthenticated = data.authenticated;
 
-    if (
-      !loading &&
-      !token &&
-      pathname !== "/login" &&
-      pathname !== "/register"
-    ) {
-      router.push("/login");
-      return;
-    }
+        if (
+          !loading &&
+          !isAuthenticated &&
+          pathname !== "/login" &&
+          pathname !== "/register"
+        ) {
+          router.push("/login");
+          return;
+        }
 
-    if (!loading && token && !activeUser && pathname !== "/select-user") {
-      // If we have a token but no active user (persona/profile), go to select-user
-      router.push("/select-user");
-    }
+        if (
+          !loading &&
+          isAuthenticated &&
+          !activeUser &&
+          pathname !== "/select-user"
+        ) {
+          router.push("/select-user");
+        }
+      } catch (error) {
+        console.error("Auth check failed", error);
+        if (pathname !== "/login" && pathname !== "/register")
+          router.push("/login");
+      }
+    };
+
+    checkAuth();
   }, [activeUser, loading, pathname, router]);
 
   if (loading) {
@@ -38,27 +53,11 @@ export function UserSelectionGuard({ children }) {
     );
   }
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-  // If not on auth/selection page and no token/user, don't render anything while redirecting
-  if (!token && pathname !== "/login" && pathname !== "/register") {
-    return null;
-  }
-
-  if (
-    token &&
-    !activeUser &&
-    pathname !== "/select-user" &&
-    pathname !== "/login" &&
-    pathname !== "/register"
-  ) {
-    return null;
-  }
+  // Fallback for visual hiding while redirecting (optional since redirect is async)
+  // We'll rely on the redirect above for total protection.
+  return children;
 
   // If we are on the selection page, we don't want the sidebar/navbar layout
   // But wait, the Sidebar/Navbar are in the layout.js.
   // I should probably move them inside the guard or make them conditional in layout.js.
-
-  return children;
 }

@@ -13,6 +13,17 @@ export function ActiveUserProvider({ children }) {
 
   useEffect(() => {
     const initUser = async () => {
+      // Don't fetch users if on login or register pages
+      if (typeof window !== "undefined") {
+        const isAuthPage =
+          window.location.pathname === "/login" ||
+          window.location.pathname === "/register";
+        if (isAuthPage) {
+          setLoading(false);
+          return;
+        }
+      }
+
       try {
         const fetchedUsers = await getUsers(0, 50, search); // Fetch a larger batch for selection
         setUsers(fetchedUsers);

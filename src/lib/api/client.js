@@ -2,23 +2,14 @@ import axios from "axios";
 import { toast } from "../hooks/use-toast";
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Request interceptor for dynamic headers
 apiClient.interceptors.request.use(
-  (config) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
+  (config) => config,
   (error) => Promise.reject(error),
 );
 
@@ -33,15 +24,18 @@ apiClient.interceptors.response.use(
     // If unauthorized, redirect to login
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+        const isAuthPage =
+          window.location.pathname === "/login" ||
+          window.location.pathname === "/register";
+        if (!isAuthPage) {
+          window.location.href = "/login";
+        }
       }
     }
 
-    // Extract error message from response (e.g., { message: "..." })
+    // Extract error message
     const errorMessage = error.response?.data?.message || "An error occurred";
 
-    // Standardize error message property
     error.message = errorMessage;
 
     // if (error?.errors && Array.isArray(error?.errors)) {
