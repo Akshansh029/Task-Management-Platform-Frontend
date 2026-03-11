@@ -40,7 +40,10 @@ async function handleProxyRequest(req, { params, method }) {
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
     if (!accessToken) {
-      return NextResponse.json({ authenticated: false });
+      return NextResponse.json({
+        authenticated: false,
+        message: "Missing access token",
+      });
     }
 
     // Decode and check expiry server-side (no library needed)
@@ -57,15 +60,20 @@ async function handleProxyRequest(req, { params, method }) {
     };
 
     if (!isExpired(accessToken)) {
-      return NextResponse.json({ authenticated: true });
+      return NextResponse.json({
+        authenticated: true,
+        message: "token NOT expired",
+      });
     }
 
     // Token exists but is expired — proactively refresh here
     if (refreshToken) {
       const refreshResponse = await fetch(`${BACKEND_URL}/auth/refresh`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `refreshToken=${refreshToken}`,
+        },
       });
 
       if (refreshResponse.ok) {
@@ -76,7 +84,10 @@ async function handleProxyRequest(req, { params, method }) {
           refreshData.refreshToken ||
           refreshResponse.headers.get("refreshToken");
 
-        const response = NextResponse.json({ authenticated: true });
+        const response = NextResponse.json({
+          authenticated: true,
+          message: "New access token fetched",
+        });
 
         if (newAccessToken) {
           response.cookies.set("accessToken", newAccessToken, {
@@ -94,13 +105,19 @@ async function handleProxyRequest(req, { params, method }) {
       }
 
       // Refresh failed — clear cookies and mark unauthenticated
-      const response = NextResponse.json({ authenticated: false });
+      const response = NextResponse.json({
+        authenticated: false,
+        message: "Refresh failed",
+      });
       response.cookies.delete("accessToken");
       response.cookies.delete("refreshToken");
       return response;
     }
 
-    return NextResponse.json({ authenticated: false });
+    return NextResponse.json({
+      authenticated: false,
+      message: "Final failure",
+    });
   }
 
   const cookieStore = await cookies();
@@ -150,10 +167,6 @@ async function handleProxyRequest(req, { params, method }) {
     path !== "auth/login" &&
     path !== "auth/refresh"
   ) {
-    console.log(
-      `[Proxy] 401 Unauthorized for ${path}. Attempting token refresh...`,
-    );
-
     const refreshResponse = await fetch(`${BACKEND_URL}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -174,10 +187,6 @@ async function handleProxyRequest(req, { params, method }) {
           { status: 500 },
         );
       }
-
-      console.log(
-        "[Proxy] Token refresh successful. retrying original request...",
-      );
 
       // Retry original request with new token
       const retryResponse = await fetch(url.toString(), {
