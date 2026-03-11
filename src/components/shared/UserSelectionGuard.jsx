@@ -25,6 +25,11 @@ export function UserSelectionGuard({ children }) {
           pathname !== "/login" &&
           pathname !== "/register"
         ) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Session expired. Please login again.",
+          });
           router.push("/login");
           return;
         }

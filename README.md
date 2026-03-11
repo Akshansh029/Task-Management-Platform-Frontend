@@ -128,8 +128,6 @@ The backend for this project is available at:
 
 ## 📌 Todo
 
-- Authentication system
-- Access Control System
 - Activity logs / audit trail
 - Task search and filtering
 - Email notifications

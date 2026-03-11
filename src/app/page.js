@@ -65,8 +65,6 @@ export default function DashboardPage() {
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
-  console.log("Page user: ", activeUser);
-
   // Auto-select first project when projects load
   useEffect(() => {
     if (projects.content?.length > 0 && !selectedProjectId) {
