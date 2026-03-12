@@ -14,7 +14,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useProjects } from "@/lib/hooks/useProjects";
-import { useUsers } from "@/lib/hooks/useUsers";
 import { useTasks } from "@/lib/hooks/useTasks";
 import { useActiveUser } from "@/providers/ActiveUserContext";
 import Link from "next/link";

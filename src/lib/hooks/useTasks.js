@@ -13,14 +13,14 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
     queryKey: projectId
       ? ["projects", projectId, "tasks", pageNo, pageSize]
       : ["tasks", pageNo, pageSize],
-    queryFn: () => tasksApi.getTasks(projectId, pageNo, pageSize),
+    queryFn: () => tasksApi.getTasks(pageNo, pageSize),
   });
 
   const createTaskMutation = useMutation({
-    mutationFn: ({ projectId, data }) => tasksApi.createTask(projectId, data),
-    onSuccess: (_, variables) => {
+    mutationFn: ({ data }) => tasksApi.createTask(data),
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["projects", variables.projectId, "tasks"],
+        queryKey: ["projects", projectId, "tasks"],
       });
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       toast({
@@ -38,12 +38,11 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
   });
 
   const updateTaskMutation = useMutation({
-    mutationFn: ({ taskId, data, projectId }) =>
-      tasksApi.updateTask(taskId, data, projectId),
+    mutationFn: ({ taskId, data }) => tasksApi.updateTask(taskId, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", variables.taskId] });
       queryClient.invalidateQueries({
-        queryKey: ["projects", variables.projectId, "tasks"],
+        queryKey: ["projects", projectId, "tasks"],
       });
       toast({
         title: "Success",
@@ -60,12 +59,11 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
   });
 
   const assignTaskMutation = useMutation({
-    mutationFn: ({ taskId, userId, projectId }) =>
-      tasksApi.assignTask(taskId, userId, projectId),
+    mutationFn: ({ taskId, userId }) => tasksApi.assignTask(taskId, userId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", variables.taskId] });
       queryClient.invalidateQueries({
-        queryKey: ["projects", variables.projectId, "tasks"],
+        queryKey: ["projects", projectId, "tasks"],
       });
       toast({
         title: "Success",
@@ -82,8 +80,7 @@ export function useTasks(projectId, initialPage = 0, initialSize = 10) {
   });
 
   const deleteTaskMutation = useMutation({
-    mutationFn: ({ taskId, projectId }) =>
-      tasksApi.deleteTask(taskId, projectId),
+    mutationFn: ({ taskId }) => tasksApi.deleteTask(taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
@@ -121,16 +118,16 @@ export function useTask(id, projectId) {
 
   const taskQuery = useQuery({
     queryKey: ["tasks", id],
-    queryFn: () => tasksApi.getTask(id, projectId),
+    queryFn: () => tasksApi.getTask(id, { projectId }),
     enabled: !!id,
   });
 
   const updateTaskMutation = useMutation({
-    mutationFn: (data) => tasksApi.updateTask(id, projectId, data),
+    mutationFn: (data) => tasksApi.updateTask(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       queryClient.invalidateQueries({
-        queryKey: ["projects", projectId, "tasks"],
+        queryKey: ["projects", "tasks"],
       });
       toast({
         title: "Success",
@@ -147,11 +144,11 @@ export function useTask(id, projectId) {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: (status) => tasksApi.updateTaskStatus(id, status, projectId),
+    mutationFn: (status) => tasksApi.updateTaskStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       queryClient.invalidateQueries({
-        queryKey: ["projects", projectId, "tasks"],
+        queryKey: ["projects", "tasks"],
       });
       toast({
         title: "Success",
@@ -161,7 +158,7 @@ export function useTask(id, projectId) {
   });
 
   const assignUserMutation = useMutation({
-    mutationFn: (userId) => tasksApi.assignTask(id, userId, projectId),
+    mutationFn: (userId) => tasksApi.assignTask(id, userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
       toast({
@@ -172,7 +169,7 @@ export function useTask(id, projectId) {
   });
 
   const deleteTaskMutation = useMutation({
-    mutationFn: () => tasksApi.deleteTask(id, projectId),
+    mutationFn: () => tasksApi.deleteTask(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
@@ -184,14 +181,14 @@ export function useTask(id, projectId) {
   });
 
   const addLabelMutation = useMutation({
-    mutationFn: (labelId) => tasksApi.addTaskLabel(id, labelId, projectId),
+    mutationFn: (labelId) => tasksApi.addTaskLabel(id, labelId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
     },
   });
 
   const removeLabelMutation = useMutation({
-    mutationFn: (labelId) => tasksApi.removeTaskLabel(id, labelId, projectId),
+    mutationFn: (labelId) => tasksApi.removeTaskLabel(id, labelId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", id] });
     },

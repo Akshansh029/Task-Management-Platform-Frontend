@@ -111,7 +111,7 @@ const TaskForm = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="task-desc">Description (Optional)</Label>
+            <Label htmlFor="task-desc">Description</Label>
             <Textarea
               id="task-desc"
               placeholder="What needs to be done?"

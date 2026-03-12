@@ -64,7 +64,7 @@ export default function TaskDetailPage() {
     deleteTask,
     addLabel,
     removeLabel,
-  } = useTask(id, projectIdFromUrl);
+  } = useTask(id, parseInt(projectIdFromUrl));
 
   const { members } = useProject(projectIdFromUrl);
   const { comments, createComment, updateComment, deleteComment } =
