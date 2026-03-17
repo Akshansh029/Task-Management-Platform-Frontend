@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { register } from "@/lib/api/auth";
 import { useToast } from "@/lib/hooks/use-toast";
+import { FcGoogle } from "react-icons/fc";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -142,6 +143,30 @@ export default function RegisterPage() {
                   {loading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
+
+              <div className="relative mt-6 mb-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-muted" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => {
+                  const backendRoot = process.env.NEXT_PUBLIC_API_BASE_URL;
+                  window.location.href = `${backendRoot}/oauth2/authorization/google`;
+                }}
+                className="w-full h-10 text-sm font-semibold transition-transform active:scale-95 flex items-center justify-center gap-2"
+              >
+                <FcGoogle className="h-6 w-6"/>
+                Google
+              </Button>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <div className="text-center text-sm">
