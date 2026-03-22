@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 
 export default function OAuth2Callback() {
     const router = useRouter();
-    const hasExchanged = useRef(false); // ✅ prevents double execution
+    const hasExchanged = useRef(false);
 
     useEffect(() => {
-        if (hasExchanged.current) return; // ✅ skip if already ran
+        if (hasExchanged.current) return;
         hasExchanged.current = true;
 
         const params = new URLSearchParams(window.location.search);
@@ -23,16 +23,15 @@ export default function OAuth2Callback() {
         const exchange = async () => {
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth2/token?code=${code}`,
-                    {
-                        method: "POST",
-                        credentials: "include",
-                    }
+                    `/api/auth/oauth2/token?code=${code}`,
+                    { method: "POST" }
                 );
 
+                console.log("Exchange status:", res.status);
+
                 if (!res.ok) {
-                    const errorText = await res.text();
-                    console.error("Exchange failed:", errorText); // ✅
+                    const err = await res.text();
+                    console.error("Exchange failed:", err);
                     router.replace("/login?error=oauth_failed");
                     return;
                 }

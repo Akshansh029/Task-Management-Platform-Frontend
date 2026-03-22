@@ -247,7 +247,8 @@ async function handleProxyRequest(req, { params, method }) {
     const isAuthRoute =
       path === "auth/login" ||
       path === "auth/register" ||
-      path === "auth/refresh";
+      path === "auth/refresh" ||
+      path === "auth/oauth2/token";
     if (isAuthRoute) {
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
         await getTokens(response, data);
