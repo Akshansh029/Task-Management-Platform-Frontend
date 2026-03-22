@@ -27,6 +27,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUsers } from "@/lib/hooks/useUsers";
 
 const MemberList = ({
   project,
@@ -35,7 +36,8 @@ const MemberList = ({
   onRemoveMember,
   loading,
 }) => {
-  const { activeUser, users, search, setSearch } = useActiveUser();
+  const { activeUser, search, setSearch } = useActiveUser();
+  const { users } = useUsers();
   const [open, setOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState(new Set());
 

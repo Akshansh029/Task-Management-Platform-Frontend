@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuGroup,
@@ -13,7 +12,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useActiveUser } from "@/providers/ActiveUserContext";
 import { getInitials } from "@/lib/utils";
-import { Check, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { logout as apiLogout } from "@/lib/api/auth";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/lib/hooks/use-toast";
